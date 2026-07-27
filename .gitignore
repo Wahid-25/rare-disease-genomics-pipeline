@@ -1,0 +1,147 @@
+# Operating-system metadata
+.DS_Store
+Thumbs.db
+*:Zone.Identifier
+
+# Python caches and environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+
+# Logs, temporary files and local backups
+*.log
+*.tmp
+*.bak
+*.swp
+*~
+validation/final_audit_20260727/local_archive/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Apptainer/Singularity container images
+containers/*.sif
+containers/*.img
+containers/*.squashfs
+
+# Large reference genomes, indexes and annotation caches
+resources/reference/*
+!resources/reference/README.md
+resources/vep_cache/
+resources/snpeff_data/
+resources/annotsv_annotations/
+resources/annovar_humandb/
+tools/annovar/humandb/
+
+# Large downloaded annotation databases
+resources/clinvar/*.vcf
+resources/clinvar/*.vcf.gz
+resources/clinvar/*.tbi
+resources/clingen/*.bed
+resources/clingen/*.bed.gz
+resources/clingen/*.tbi
+
+# Sequencing reads and alignment files
+**/*.fastq
+**/*.fastq.gz
+**/*.fq
+**/*.fq.gz
+**/*.bam
+**/*.bai
+**/*.cram
+**/*.crai
+
+# External real-case validation data and large intermediates
+validation/external_real_cases/
+validation/pipeline_revision/backups/
+
+# Generated case preparation and pipeline results
+input/cases/*
+!input/cases/README.md
+results/*
+!results/README.md
+
+# Local archives and downloaded source packages
+*.tar
+*.tar.gz
+*.tgz
+*.zip
+
+# Preserve small project manifests and documentation even when nearby
+!validation/final_audit_20260727/*.tsv
+!validation/final_audit_20260727/*.sha256
+!validation/final_audit_20260727/*.md
+!validation/final_audit_20260727/scripts/
+!validation/final_audit_20260727/scripts/*.py
+
+# External acceptance datasets and their generated resources
+validation/external_acceptance/
+
+# Generated universal-validation outputs
+validation/universal_pipeline_testing/outputs/
+validation/universal_pipeline_testing/failed_runs/
+
+# Large phenotype and disease-ontology databases
+resources/phenotype/hpo/**/*.sqlite
+resources/phenotype/hpo/**/*.hpoa
+resources/phenotype/hpo/**/*.gtf.gz
+resources/disease_ontology/mondo/**/*.sqlite
+resources/disease_ontology/mondo/**/*.obo
+
+# Generated BED resources
+validation/**/*.bed
+validation/**/*.bed.gz
+
+# Downloaded third-party ANNOVAR data
+tools/annovar/humandb/
+
+# One-time local repository preparation scripts
+prepare_github_safe_repo.sh
+
+# Root-level external acceptance helper
+build_external_acceptance_005.sh
+
+# Additional downloaded reference resources
+resources/phenotype/hpo/**/genes_to_phenotype.txt
+resources/phenotype/hpo/**/hp.obo
+tools/annovar/example/gene_fullxref.txt
+
+# Historical source snapshots
+**/*.before_*
+**/*before_*
+
+# Old and duplicated validation work
+validation/patient_vcfs/
+validation/pipeline_revision/
+validation/universal_pipeline_testing/manifests/rejected_inputs/
+
+# Redundant G2P copies
+resources/g2p/
+resources/gene_disease/g2p/AllG2P.latest.csv
+resources/gene_disease/g2p/AllG2P.20*.csv
+
+# Generated SnpEff summaries
+resources/snpEff_genes.txt
+resources/snpEff_summary.html
+
+# Third-party ANNOVAR distribution
+tools/annovar/
+
+# Temporary Git candidate inventory
+validation/final_audit_20260727/github_commit_candidates.tsv
+
+# Locally installed third-party tools and setup work
+resources/annotsv_setup/
+tools/ClassifyCNV/
+tools/InterVar/
+
+# Historical validation manifests
+validation/universal_pipeline_testing/manifests/*.pre_correction.tsv

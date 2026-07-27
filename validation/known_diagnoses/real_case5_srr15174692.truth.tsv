@@ -1,0 +1,2 @@
+expected_gene	expected_disease	expected_variant	expected_candidate_type	max_acceptable_rank	notes
+FGFR3	Achondroplasia	chr4:1804392:G>A	small_variant	10	Published Case 5; FGFR3 c.1144G>A p.Gly382Arg, equivalent to NM_000142 c.1138G>A p.Gly380Arg; heterozygous autosomal-dominant de novo pathogenic variant

@@ -1,0 +1,32 @@
+{
+  "data": [
+    {
+      "objCls": "Gene",
+      "id": "PA29982",
+      "symbol": "ITSN2",
+      "name": "intersectin 2",
+      "alleleType": "None",
+      "amp": false,
+      "buildVersion": "GRCh38.p7",
+      "cbStart": "p23.3",
+      "cbStop": "p25.1",
+      "chr": {
+        "objCls": "Chromosome",
+        "id": "PA523",
+        "name": "chr2"
+      },
+      "chrStartPosB37": 24425733,
+      "chrStartPosB38": 24202866,
+      "chrStopPosB37": 24583647,
+      "chrStopPosB38": 24360528,
+      "cpicGene": false,
+      "hasNonStandardHaplotypes": false,
+      "hideHaplotypes": false,
+      "history": [],
+      "pharmVarGene": false,
+      "strand": "minus",
+      "vipTier": "Undefined"
+    }
+  ],
+  "status": "success"
+}

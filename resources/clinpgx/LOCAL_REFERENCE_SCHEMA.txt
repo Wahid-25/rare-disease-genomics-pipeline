@@ -1,0 +1,11 @@
+LOCAL CURATED PGX VALIDATION SCHEMA
+====================================
+Scope: explicit pipeline validation mode only.
+Assembly: GRCh38 forward genomic alleles.
+Required identity fields: rsid and/or chromosome+position+ref+alt.
+Matching priority:
+1. rsid_and_allele
+2. allele_coordinates
+3. rsid_only when one side lacks coordinates
+Complete conflicting allele keys never match by rsID alone.
+This resource is synthetic validation truth and is not an official ClinPGx or CPIC resource.

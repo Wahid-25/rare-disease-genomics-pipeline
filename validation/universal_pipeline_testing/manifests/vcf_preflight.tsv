@@ -1,0 +1,14 @@
+file	records	sample_count	samples	first_contig	column_mismatches	bcftools_read
+patient_01.vcf	3001	1	PATIENT_01	1	0	PASS
+patient_02.vcf	3001	1	PATIENT_02	1	0	PASS
+patient_03.vcf	3001	1	PATIENT_03	1	0	PASS
+patient_04.vcf	3001	1	PATIENT_04	1	0	PASS
+patient_05.vcf	3001	1	PATIENT_05	1	0	PASS
+patient_06_pku.vcf	2988	1	PATIENT_06	1	0	PASS
+patient_07_wilson_disease.vcf	2987	1	PATIENT_07	1	0	PASS
+patient_08_familial_hypercholesterolemia.vcf	2987	1	PATIENT_08	1	0	PASS
+patient_09_g6pd_deficiency.vcf	2986	1	PATIENT_09	1	0	PASS
+patient_10_familial_mediterranean_fever.vcf	2987	1	PATIENT_10	1	0	PASS
+patient_11_hereditary_hemochromatosis.vcf	2987	1	PATIENT_11	1	0	PASS
+patient_12_lynch_syndrome.vcf	2987	1	PATIENT_12	1	0	PASS
+patient_13_alpha1_antitrypsin_deficiency.vcf	2988	1	PATIENT_13	1	0	PASS

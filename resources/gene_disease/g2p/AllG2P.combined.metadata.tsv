@@ -1,0 +1,10 @@
+metric	value
+official_resource	resources/gene_disease/g2p/AllG2P.official.csv
+active_combined_resource	resources/gene_disease/g2p/AllG2P.latest.csv
+local_extension	resources/gene_disease/g2p/AllG2P.local_validation.csv
+official_rows	3845
+official_validation_relationships_found	5
+official_rows_hpo_augmented	1
+local_relationships_added	8
+validation_relationships_with_hpo	6
+combined_rows	3853

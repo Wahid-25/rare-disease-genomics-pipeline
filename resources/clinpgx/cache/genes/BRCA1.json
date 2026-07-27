@@ -1,0 +1,37 @@
+{
+  "data": [
+    {
+      "objCls": "Gene",
+      "id": "PA25411",
+      "symbol": "BRCA1",
+      "name": "BRCA1 DNA repair associated",
+      "alleleType": "None",
+      "amp": false,
+      "buildVersion": "GRCh38.p7",
+      "cbStart": "q21.31",
+      "cbStop": "q21.31",
+      "chr": {
+        "objCls": "Chromosome",
+        "id": "PA517",
+        "name": "chr17"
+      },
+      "chrStartPosB37": 41196312,
+      "chrStartPosB38": 43044295,
+      "chrStopPosB37": 41277500,
+      "chrStopPosB38": 43125483,
+      "cpicGene": false,
+      "hasNonStandardHaplotypes": false,
+      "hideHaplotypes": false,
+      "history": [],
+      "pharmVarGene": false,
+      "strand": "minus",
+      "vipId": "PA166165422",
+      "vipSummary": {
+        "id": 1448638215,
+        "html": "<p>Mutations in the <em>BRCA1</em> gene are associated with several types of cancer, most notably familial forms of breast cancer and ovarian cancer.</p>\n"
+      },
+      "vipTier": "Cancer Genome"
+    }
+  ],
+  "status": "success"
+}

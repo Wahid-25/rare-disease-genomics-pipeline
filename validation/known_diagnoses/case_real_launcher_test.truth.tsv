@@ -1,0 +1,2 @@
+expected_gene	expected_disease	expected_variant	expected_candidate_type	max_acceptable_rank	notes
+HEXA	Tay-Sachs disease	chr15:72346579:G>GGATA	small_variant	5	Controlled synthetic pathogenic small variant

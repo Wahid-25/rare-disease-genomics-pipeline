@@ -1,0 +1,23 @@
+UNIVERSAL INHERITANCE AND PLOIDY FOUNDATION
+===========================================
+Inheritance precedence:
+1. mitochondrial
+2. X-linked G2P forms
+3. autosomal recessive/biallelic
+4. autosomal dominant/monoallelic
+5. unknown
+
+Sex metadata:
+- production default: unknown
+- explicit --sex male|female|unknown supported
+- validation mode may resolve sex from sample_sheet.csv
+
+Ploidy preflight:
+- GRCh38 X/Y PAR1 and PAR2 aware
+- autosomal, X, Y, PAR and MT calls reported
+- biological inconsistencies warn by default
+- structural VCF errors fail
+
+Compound heterozygosity:
+- not inferred by this foundation
+- requires a separate gene-level phase-aware aggregation stage

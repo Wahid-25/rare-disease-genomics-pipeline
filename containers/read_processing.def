@@ -1,0 +1,53 @@
+Bootstrap: docker
+From: ubuntu:24.04
+
+%labels
+    Author Rare Disease Project
+    Purpose WES read QC alignment and small-variant calling
+    Assembly GRCh38
+
+%environment
+    export LC_ALL=C
+    export LANG=C
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+
+    apt-get update
+
+    apt-get install -y --no-install-recommends \
+        bwa \
+        fastp \
+        samtools \
+        bcftools \
+        tabix \
+        pigz \
+        ca-certificates
+
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+%test
+    command -v bwa
+    command -v fastp
+    command -v samtools
+    command -v bcftools
+    command -v bgzip
+    command -v tabix
+    command -v pigz
+
+    bwa 2>&1 | grep -qi 'version'
+    fastp --version
+    samtools --version
+    bcftools --version
+
+%runscript
+    echo "Read-processing container"
+    echo
+    echo "Installed tools:"
+    echo "  bwa"
+    echo "  fastp"
+    echo "  samtools"
+    echo "  bcftools"
+    echo "  bgzip/tabix"
+    echo "  pigz"

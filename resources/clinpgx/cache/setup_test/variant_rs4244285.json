@@ -1,0 +1,20 @@
+{
+  "data": [
+    {
+      "objCls": "Variant",
+      "id": "PA166154053",
+      "symbol": "rs4244285",
+      "name": "rs4244285",
+      "changeClassification": "Synonymous",
+      "clinicalSignificance": "drug-response",
+      "history": [],
+      "lastUpdatedFromDbsnp": "2020-06-18T20:57:02.154395",
+      "obsolete": false,
+      "rare": false,
+      "raritySource": "gnomAD v4",
+      "terms": [],
+      "type": "SNP"
+    }
+  ],
+  "status": "success"
+}

@@ -1,0 +1,3 @@
+test	endpoint	status	records	cache_file	error	accessed_at_utc	api_base
+gene_CYP2C19	/data/gene	success	1	resources/clinpgx/cache/setup_test/gene_CYP2C19.json		2026-07-22T06:37:45.106117+00:00	https://api.clinpgx.org/v1
+variant_rs4244285	/data/variant	success	1	resources/clinpgx/cache/setup_test/variant_rs4244285.json		2026-07-22T06:37:45.106117+00:00	https://api.clinpgx.org/v1

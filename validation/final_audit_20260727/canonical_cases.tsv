@@ -1,0 +1,13 @@
+sample_id	canonical_case_id	outcome_mode	final_directory	required_file_count	preserved_final_file_count	validation_status
+PATIENT_01	patient_01_cf	LEGACY	results/cases/patient_01_cf/final	2	35	PASS
+PATIENT_02	patient_02_scd	LEGACY	results/cases/patient_02_scd/final	2	34	PASS
+PATIENT_03	patient_03_huntington_disease	ROUTED_REPEAT	results/cases/patient_03_huntington_disease/final	3	41	PASS
+PATIENT_04	patient_04_brca1	LEGACY	results/cases/patient_04_brca1/final	2	34	PASS
+PATIENT_05	patient_05_tay_sachs	CURRENT	results/cases/patient_05_tay_sachs/final	2	39	PASS
+PATIENT_06	patient_06_pku	CURRENT	results/cases/patient_06_pku/final	2	31	PASS
+PATIENT_07	patient_07_wilson_disease	CURRENT	results/cases/patient_07_wilson_disease/final	2	31	PASS
+PATIENT_08	patient_08_familial_hypercholesterolemia	CURRENT	results/cases/patient_08_familial_hypercholesterolemia/final	2	31	PASS
+PATIENT_09	patient_09_g6pd_deficiency	CURRENT	results/cases/patient_09_g6pd_deficiency/final	2	31	PASS
+PATIENT_10	patient_10_familial_mediterranean_fever	CURRENT	results/cases/patient_10_familial_mediterranean_fever/final	2	33	PASS
+PATIENT_11	patient_11_hereditary_hemochromatosis	CURRENT	results/cases/patient_11_hereditary_hemochromatosis/final	2	33	PASS
+PATIENT_12	patient_12_lynch_syndrome	CURRENT	results/cases/patient_12_lynch_syndrome/final	2	33	PASS

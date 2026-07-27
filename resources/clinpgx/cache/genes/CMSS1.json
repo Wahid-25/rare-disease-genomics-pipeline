@@ -1,0 +1,32 @@
+{
+  "data": [
+    {
+      "objCls": "Gene",
+      "id": "PA142672387",
+      "symbol": "CMSS1",
+      "name": "cms1 ribosomal small subunit homolog",
+      "alleleType": "None",
+      "amp": false,
+      "buildVersion": "GRCh38.p7",
+      "cbStart": "q12.1",
+      "cbStop": "q12.1",
+      "chr": {
+        "objCls": "Chromosome",
+        "id": "PA527",
+        "name": "chr3"
+      },
+      "chrStartPosB37": 99536678,
+      "chrStartPosB38": 99817834,
+      "chrStopPosB37": 99897476,
+      "chrStopPosB38": 100178632,
+      "cpicGene": false,
+      "hasNonStandardHaplotypes": false,
+      "hideHaplotypes": false,
+      "history": [],
+      "pharmVarGene": false,
+      "strand": "plus",
+      "vipTier": "Undefined"
+    }
+  ],
+  "status": "success"
+}

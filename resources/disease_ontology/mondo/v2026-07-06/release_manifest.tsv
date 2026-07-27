@@ -1,0 +1,12 @@
+field	value
+resource	Mondo Disease Ontology
+release	v2026-07-06
+release_date	2026-07-06
+data_version	releases/2026-07-06
+source_url	https://purl.obolibrary.org/obo/mondo/mondo.obo
+file	mondo.obo
+size_bytes	52967808
+sha256	75c51066741e04c0ec4751210911d29e17e16431ed2ba5b8a46fc6a37ff5b00e
+mondo_terms	35998
+xref_lines	147608
+license	CC-BY-4.0

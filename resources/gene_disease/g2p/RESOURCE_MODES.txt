@@ -1,0 +1,7 @@
+G2P RESOURCE MODES
+==================
+Production (default): AllG2P.official.csv
+Validation only:      AllG2P.validation.csv
+Local extension:      AllG2P.local_validation.csv
+Legacy file:          AllG2P.latest.csv is retained but is not selected by the universal case runner.
+Validation resources must never be treated as official Gene2Phenotype assertions.

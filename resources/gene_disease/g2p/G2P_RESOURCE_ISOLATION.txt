@@ -1,0 +1,7 @@
+G2P RESOURCE ISOLATION
+======================
+Production default: AllG2P.official.csv
+Validation explicit: AllG2P.validation.csv
+Compatibility only: AllG2P.latest.csv
+
+The universal runner selects one resource before variant routing and passes it to SNV mapping, SNV phenotype scoring, and CNV scoring. Independent scoring-script calls default to the official production resource. QC files record the exact resource path and SHA256.

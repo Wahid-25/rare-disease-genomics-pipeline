@@ -1,0 +1,32 @@
+{
+  "data": [
+    {
+      "objCls": "Gene",
+      "id": "PA36447",
+      "symbol": "TERT",
+      "name": "telomerase reverse transcriptase",
+      "alleleType": "None",
+      "amp": false,
+      "buildVersion": "GRCh38.p7",
+      "cbStart": "p15.33",
+      "cbStop": "p15.33",
+      "chr": {
+        "objCls": "Chromosome",
+        "id": "PA531",
+        "name": "chr5"
+      },
+      "chrStartPosB37": 1253282,
+      "chrStartPosB38": 1253167,
+      "chrStopPosB37": 1295178,
+      "chrStopPosB38": 1295626,
+      "cpicGene": false,
+      "hasNonStandardHaplotypes": false,
+      "hideHaplotypes": false,
+      "history": [],
+      "pharmVarGene": false,
+      "strand": "minus",
+      "vipTier": "Undefined"
+    }
+  ],
+  "status": "success"
+}

@@ -1,0 +1,33 @@
+Bootstrap: docker
+From: python:3.9-slim
+
+%post
+    apt-get update
+
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+        build-essential \
+        libgomp1 \
+        ca-certificates
+
+    python3 -m pip install --upgrade pip setuptools wheel
+
+    # Compatible scientific stack for the older ISV model
+    python3 -m pip install \
+        "numpy==1.22.4" \
+        "scipy==1.7.3" \
+        "scikit-learn==0.24.2"
+
+    python3 -m pip install "isv==0.3.16"
+
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+%environment
+    export PYTHONUNBUFFERED=1
+
+%runscript
+    exec "$@"
+
+%test
+    python3 -c "import sklearn; print('scikit-learn:', sklearn.__version__)"
+    python3 -c "import isv; print('ISV import successful')"

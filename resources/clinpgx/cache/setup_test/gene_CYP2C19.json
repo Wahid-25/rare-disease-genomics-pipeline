@@ -1,0 +1,105 @@
+{
+  "data": [
+    {
+      "objCls": "Gene",
+      "id": "PA124",
+      "symbol": "CYP2C19",
+      "name": "cytochrome P450 family 2 subfamily C member 19",
+      "alleleFile": "CYP2C19_allele_definition_table.xlsx",
+      "alleleFunctionSource": "CPIC",
+      "alleleType": "Named Alleles",
+      "amp": true,
+      "buildVersion": "GRCh38.p7",
+      "cbStart": "q23.33",
+      "cbStop": "q23.33",
+      "chr": {
+        "objCls": "Chromosome",
+        "id": "PA504",
+        "name": "chr10"
+      },
+      "chrStartPosB37": 96522463,
+      "chrStartPosB38": 94762681,
+      "chrStopPosB37": 96612671,
+      "chrStopPosB38": 94853205,
+      "cpicGene": true,
+      "hasNonStandardHaplotypes": false,
+      "hideHaplotypes": false,
+      "history": [],
+      "pharmVarGene": true,
+      "strand": "plus",
+      "vipCitation": {
+        "id": 14171708,
+        "title": "PharmGKB summary: very important pharmacogene information for cytochrome P450, family 2, subfamily C, polypeptide 19.",
+        "_sameAs": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3349992",
+        "authors": [
+          "Scott Stuart A",
+          "Sangkuhl Katrin",
+          "Shuldiner Alan R",
+          "Hulot Jean-Sébastien",
+          "Thorn Caroline F",
+          "Altman Russ B",
+          "Klein Teri E"
+        ],
+        "crossReferences": [
+          {
+            "id": 1449263318,
+            "resource": "PubMed Central",
+            "resourceId": "PMC3349992",
+            "_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3349992"
+          },
+          {
+            "id": 827823934,
+            "resource": "PubMed",
+            "resourceId": "22027650",
+            "_url": "https://www.ncbi.nlm.nih.gov/pubmed/22027650"
+          },
+          {
+            "id": 1449263319,
+            "resource": "DOI",
+            "resourceId": "10.1097/FPC.0b013e32834d4962",
+            "_url": "http://dx.doi.org/10.1097%2FFPC.0b013e32834d4962"
+          }
+        ],
+        "day": -1,
+        "journal": "Pharmacogenetics and genomics",
+        "month": 2,
+        "objCls": "Literature",
+        "page": "159-65",
+        "pediatric": false,
+        "pgkbPublication": true,
+        "pubDate": "2012-02-01T00:00:00-08:00",
+        "pubmedMeshTerms": [],
+        "terms": [
+          {
+            "id": 1454108640,
+            "resource": "ClinPGx Tags",
+            "term": "PharmGKB",
+            "termId": "pgkbTags:1454108640"
+          },
+          {
+            "id": 1451577482,
+            "resource": "PGx Paper Types",
+            "term": "Review",
+            "termId": "pgxPaperTypes:1451577482"
+          },
+          {
+            "id": 1451577562,
+            "resource": "PGx Paper Types",
+            "term": "Allele Function",
+            "termId": "pgxPaperTypes:1451577562"
+          }
+        ],
+        "type": "Literature",
+        "volume": "22",
+        "year": 2012
+      },
+      "vipId": "PA166169770",
+      "vipSummary": {
+        "id": 1448744769,
+        "html": "<p>CYP2C19 is one of the key pharmacogenes involved in implementation of pharmacogenomics.</p>\n<ul>\n<li>It is involved in guidelines for antidepressants, <a href=\"/chemical/PA449053/guidelineAnnotation/PA166104948\">clopidogrel</a> and <a href=\"/chemical/PA10233/guidelineAnnotation/PA166161537\">voriconazole</a> (<a href=\"/gene/PA124/prescribingInfo\">go to list of all guidelines with CYP2C19</a>).</li>\n<li>the nomenclature has been set by <a rel=\"noopener noreferrer\" href=\"https://www.pharmvar.org/gene/CYP2C19\" target=\"_blank\">PharmVar</a>, note that the reference sequence for CYP2C19 on hg38 is equivalent to <a href=\"/haplotype/PA166218473\">CYP2C19*38</a> not <a href=\"/haplotype/PA165980634\">CYP2C19*1</a>.</li>\n<li>the AMP tier 1 alleles are <a href=\"/haplotype/PA165980635\">CYP2C19*2</a>, <a href=\"/haplotype/PA165980636\">CYP2C19*3</a> and <a href=\"/haplotype/PA165816533\">CYP2C19*17</a> <a href=\"/ampAllelesToTest\">see all alleles on the AMP recommended to test list</a></li>\n<li>key variant pages are <a href=\"/variant/PA166154053\">rs4244285</a>(part of *2),  <a href=\"/variant/PA166154070\">rs4986893</a>(part of *3) and <a href=\"/variant/PA166154147\">rs12248560</a>(part of *17)</li>\n<li>See the <a href=\"/page/cyp2c19RefMaterials\">Gene-specific Information Tables</a> for Allele Definitions (for which variants comprise which star alleles), Allele function assignments (normal function, no function, decreased or increased function etc) and Diplotype-Phenotype Table (for how the alleles combine to form metabolizer phenotypes for PM, NM, UM)</li>\n</ul>\n"
+      },
+      "vipTier": "Tier 1"
+    }
+  ],
+  "status": "success"
+}

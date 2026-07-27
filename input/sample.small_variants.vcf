@@ -1,0 +1,18 @@
+##fileformat=VCFv4.2
+##source=synthetic_rare_disease_annotation_input_v1
+##reference=GRCh38/hg38
+##dataset_note=Synthetic teaching input for annotation pipeline testing; not a real patient genome and not clinically valid.
+##contig=<ID=chr1,length=248956422>
+##contig=<ID=chr11,length=135086622>
+##contig=<ID=chr19,length=58617616>
+##FILTER=<ID=PASS,Description="All filters passed">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=AD,Number=R,Type=Integer,Description="Allelic depths for REF and ALT alleles">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read depth">
+##FORMAT=<ID=GQ,Number=1,Type=Integer,Description="Genotype quality">
+##FORMAT=<ID=PL,Number=G,Type=Integer,Description="Phred-scaled genotype likelihoods">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	SAMPLE_RARE_001
+chr1	169549811	rs6025	C	T	99	PASS	.	GT:AD:DP:GQ:PL	0/1:22,18:40:99:180,0,190
+chr11	5227002	rs334	T	A	99	PASS	.	GT:AD:DP:GQ:PL	1/1:0,43:43:99:255,130,0
+chr19	44908684	rs429358	T	C	90	PASS	.	GT:AD:DP:GQ:PL	0/1:20,17:37:95:160,0,170
+chr19	44908822	rs7412	C	T	88	PASS	.	GT:AD:DP:GQ:PL	0/0:35,0:35:99:0,105,255

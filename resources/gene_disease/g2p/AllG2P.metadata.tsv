@@ -1,0 +1,8 @@
+field	value
+resource	Gene2Phenotype_All_Panels
+download_date_utc	2026-07-21
+source_url	https://www.ebi.ac.uk/gene2phenotype/api/panel/all/download
+versioned_file	AllG2P.2026-07-21.csv
+latest_file	AllG2P.latest.csv
+data_rows	3845
+sha256	222652bb53a5718f8649a9b1b68fc623e2f85dc0f89e699c4f34c1e78b6f795f

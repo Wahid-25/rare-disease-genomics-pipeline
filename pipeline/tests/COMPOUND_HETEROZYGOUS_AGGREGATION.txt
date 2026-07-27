@@ -1,0 +1,49 @@
+COMPOUND-HETEROZYGOUS AGGREGATION
+=================================
+
+Scope
+-----
+This is a gene-and-disease-level evidence stage for recessive small-variant
+candidates. It is independent of any patient, gene, disease, coordinate, or
+validation truth row.
+
+Phase policy
+------------
+confirmed_trans
+    Two heterozygous variants have opposite alternate haplotypes and share
+    the same PS or PID phase block.
+
+likely_cis
+    Two heterozygous variants have the alternate allele on the same
+    haplotype in a shared PS or PID phase block.
+
+possible_compound_heterozygous
+    Multiple heterozygous variants are present but the VCF does not prove
+    trans configuration. This requires segregation or phasing review.
+
+single_recessive_allele
+    Only one qualifying heterozygous variant is present for the same
+    gene-disease relationship.
+
+homozygous_biallelic
+    A homozygous alternate genotype already fulfils the biallelic genotype
+    requirement. No compound score is added.
+
+Scoring policy
+--------------
+The stage updates the existing inheritance component; it does not add a new
+independent score dimension.
+
+confirmed_trans                 target inheritance points = 3
+possible_compound_heterozygous  target inheritance points = 1
+likely_cis                      no additional credit
+single_recessive_allele         no additional credit
+homozygous_biallelic            existing full credit retained
+
+Unphased variants are never labelled confirmed trans.
+
+Preserved VCF FORMAT fields
+---------------------------
+GT, PS, PID, PGT, DP, GQ, and AD are preserved in the extracted table where
+present. The current validation VCFs have no PS, PID, PGT, or phased GT, so
+their heterozygous pairs can only be classified as possible, not confirmed.
