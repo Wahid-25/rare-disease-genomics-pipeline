@@ -3,6 +3,8 @@
 A reproducible GRCh38 workflow for rare-disease variant annotation,
 gene-disease prioritisation, inheritance evaluation, phenotype scoring,
 ClinPGx matching, CNV analysis and repeat-expansion routing.
+<img width="975" height="549" alt="image" src="https://github.com/user-attachments/assets/3bfd4472-c24b-4646-ae17-48be3252c869" />
+
 
 ## Main capabilities
 
