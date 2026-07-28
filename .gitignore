@@ -140,6 +140,9 @@ validation/final_audit_20260727/github_commit_candidates.tsv
 
 # Locally installed third-party tools and setup work
 resources/annotsv_setup/
+# Local Sphinx documentation builds
+docs/_build/
+.docs-venv/
 tools/ClassifyCNV/
 tools/InterVar/
 
