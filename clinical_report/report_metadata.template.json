@@ -1,0 +1,31 @@
+{
+  "report_title": "GENOMIC VARIANT INTERPRETATION REPORT",
+  "analysis_mode": null,
+  "laboratory": {
+    "name": "Genosphere Clinical Genome Center",
+    "subtitle": "Educational Genomic Variant Interpretation",
+    "signatory": "Prepared for educational demonstration; not clinically signed out."
+  },
+  "patient": {
+    "patient_name": null,
+    "sex": "    "patient_name": null,
+    "sex": "Other/Unspecified",
+    "date_of_birth": null,
+    "indication": null,
+    "ordering_physician": null,
+    "account_number": null,
+    "specimen": null,
+    "reported_date": null,
+    "collected_date": null,
+    "received_date": null
+  },
+  "phenotype_summary": null,
+  "gene_information": null,
+  "references": [],
+  "recommendations": [
+    "Clinical correlation is recommended.",
+    "Genetic counselling is recommended.",
+    "Orthogonal confirmation is recommended before clinical use.",
+    "The complete candidate table should be reviewed before finalising the report."
+  ]
+}

@@ -148,3 +148,12 @@ tools/InterVar/
 
 # Historical validation manifests
 validation/universal_pipeline_testing/manifests/*.pre_correction.tsv
+# Protected clinical-report information
+input/cases/*/metadata/report_metadata.json
+results/cases/*/final/report/*.report_draft.json
+results/cases/*/final/report/*.report_draft.json.sha256
+results/cases/*/final/report/*.report_reviewed.json
+results/cases/*/final/report/*.pdf
+# Python runtime files
+# Temporary pipeline backups
+pipeline/run_case_pipeline.sh.before_report_json_*.bak

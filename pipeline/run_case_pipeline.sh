@@ -223,6 +223,7 @@ REQUIRED_SCRIPTS=(
     pipeline/case_workflow/12_score_cnv_candidates.py
     pipeline/case_workflow/13_add_clingen_small_variants.sh
     pipeline/case_workflow/14_build_master_candidate_table.py
+    pipeline/case_workflow/22_build_clinical_report_json.py
 )
 
 for script in "${REQUIRED_SCRIPTS[@]}"; do
@@ -642,7 +643,34 @@ PHENOTYPE_SHA256="$(sha256sum "$STAGED_PHENOTYPES" | awk '{print $1}')"
     printf "top_priority\t%s\n" "$TOP_PRIORITY"
     printf "master_table\t%s\n" "${MASTER_TABLE#"$PROJECT_ROOT/"}"
     printf "pipeline_log\t%s\n" "${PIPELINE_LOG#"$PROJECT_ROOT/"}"
+
 } > "$SUMMARY_FILE"
+
+echo
+echo "[5] Building clinical-report draft JSON"
+
+python3 \
+    pipeline/case_workflow/22_build_clinical_report_json.py \
+    "$CASE_ID"
+
+REPORT_JSON="$CASE_RESULT_DIR/final/report/${CASE_ID}.report_draft.json"
+REPORT_JSON_CHECKSUM="${REPORT_JSON}.sha256"
+
+if [[ ! -s "$REPORT_JSON" ]]; then
+    die "Clinical-report draft JSON was not created."
+fi
+
+if [[ ! -s "$REPORT_JSON_CHECKSUM" ]]; then
+    die "Clinical-report JSON checksum was not created."
+fi
+
+printf "report_json\t%s\n" \
+    "${REPORT_JSON#"$PROJECT_ROOT/"}" \
+    >> "$SUMMARY_FILE"
+
+printf "report_json_sha256\t%s\n" \
+    "$(sha256sum "$REPORT_JSON" | awk '{print $1}')" \
+    >> "$SUMMARY_FILE"
 
 echo
 echo "========================================"
@@ -661,6 +689,9 @@ echo "$MASTER_TABLE"
 echo
 echo "Pipeline summary:"
 echo "$SUMMARY_FILE"
+echo
+echo "Clinical-report JSON:"
+echo "$REPORT_JSON"
 echo
 echo "Pipeline log:"
 echo "$PIPELINE_LOG"
