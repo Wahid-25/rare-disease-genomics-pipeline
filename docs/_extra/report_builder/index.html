@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Variant Report Generator</title>
+<style>
+  :root{
+    --navy:#1F4E79;
+    --teal:#0F7C8A;
+    --paper:#ffffff;
+    --canvas:#eef1f4;
+    --ink:#1c2733;
+    --muted:#5b6b7a;
+    --line:#d7dee5;
+    --amber:#7F6000;
+    --amber-bg:#FFF2CC;
+    --amber-brd:#BF9000;
+    --danger:#B3261E;
+    --danger-bg:#FCE8E6;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
+    background:var(--canvas);
+    color:var(--ink);
+  }
+  .layout{
+    display:grid;
+    grid-template-columns: 380px 1fr;
+    min-height:100vh;
+  }
+  /* ---------- FORM PANEL ---------- */
+  .panel{
+    background:var(--paper);
+    border-right:1px solid var(--line);
+    padding:20px 22px 80px 22px;
+    overflow-y:auto;
+    max-height:100vh;
+  }
+  .panel h1{
+    font-size:18px;
+    margin:0 0 2px 0;
+    color:var(--navy);
+  }
+  .panel p.sub{
+    margin:0 0 20px 0;
+    font-size:12.5px;
+    color:var(--muted);
+  }
+  fieldset{
+    border:1px solid var(--line);
+    border-radius:8px;
+    margin:0 0 16px 0;
+    padding:12px 14px 14px 14px;
+  }
+  legend{
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    color:var(--teal);
+    padding:0 6px;
+  }
+  label{
+    display:block;
+    font-size:11.5px;
+    font-weight:600;
+    color:var(--muted);
+    margin:8px 0 3px 0;
+  }
+  label:first-child{margin-top:0;}
+  input[type=text], input[type=date], textarea, select{
+    width:100%;
+    font-family:inherit;
+    font-size:13px;
+    padding:7px 8px;
+    border:1px solid var(--line);
+    border-radius:5px;
+    background:#fbfcfd;
+    color:var(--ink);
+  }
+  textarea{resize:vertical; min-height:56px; line-height:1.4;}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .actions{
+    position:sticky;
+    bottom:0;
+    background:var(--paper);
+    padding-top:10px;
+    margin-top:4px;
+  }
+  button{
+    width:100%;
+    padding:11px;
+    border:none;
+    border-radius:6px;
+    font-size:13.5px;
+    font-weight:700;
+    cursor:pointer;
+    margin-bottom:8px;
+  }
+  #printBtn{ background:var(--teal); color:#fff; }
+  #printBtn:hover{ background:#0c6773; }
+  #resetBtn{ background:#eef1f4; color:var(--ink); border:1px solid var(--line); }
+  #resetBtn:hover{ background:#e2e7ec; }
+  .hint{ font-size:11px; color:var(--muted); margin-top:6px; text-align:center; }
+
+  /* ---------- AUTO-GENERATED PREVIEW BOX (inside panel) ---------- */
+  .auto-preview{
+    background:#f6fafb;
+    border:1px dashed var(--teal);
+    border-radius:6px;
+    padding:9px 10px;
+    font-size:12px;
+    line-height:1.5;
+    color:#28414a;
+    min-height:40px;
+    white-space:pre-wrap;
+  }
+  .auto-note{
+    font-size:10.5px;
+    color:var(--muted);
+    font-style:italic;
+    margin:4px 0 0 0;
+  }
+
+  /* ---------- AUTOCOMPLETE ---------- */
+  .ac-wrap{ position:relative; }
+  .ac-list{
+    position:absolute;
+    top:100%; left:0; right:0;
+    background:#fff;
+    border:1px solid var(--line);
+    border-top:none;
+    border-radius:0 0 6px 6px;
+    max-height:210px;
+    overflow-y:auto;
+    z-index:50;
+    box-shadow:0 6px 14px rgba(20,30,40,.12);
+    display:none;
+  }
+  .ac-list.show{ display:block; }
+  .ac-item{
+    padding:7px 9px;
+    font-size:12.5px;
+    cursor:pointer;
+    border-bottom:1px solid #f0f2f4;
+  }
+  .ac-item:last-child{ border-bottom:none; }
+  .ac-item:hover, .ac-item.active{ background:#eef6f8; }
+  .ac-item b{ color:var(--navy); }
+  .ac-sub{ color:var(--muted); font-size:11px; }
+  .ac-loading{ padding:7px 9px; font-size:12px; color:var(--muted); font-style:italic; }
+
+  /* ---------- VARIANT CARDS (multi-variant / multi-gene support) ---------- */
+  #variantsFieldset{ padding-bottom:10px; }
+  .variant-card{
+    border:1px solid var(--line);
+    border-radius:7px;
+    padding:10px 12px 12px 12px;
+    margin-bottom:12px;
+    background:#fbfdfe;
+    position:relative;
+  }
+  .variant-card:last-of-type{ margin-bottom:8px; }
+  .variant-card-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:6px;
+  }
+  .variant-num{
+    font-size:11.5px;
+    font-weight:800;
+    color:var(--navy);
+    text-transform:uppercase;
+    letter-spacing:.03em;
+  }
+  .removeVariantBtn{
+    width:auto;
+    margin:0;
+    padding:3px 8px;
+    font-size:10.5px;
+    font-weight:700;
+    background:var(--danger-bg);
+    color:var(--danger);
+    border-radius:5px;
+  }
+  .removeVariantBtn:hover{ background:#f6d2ce; }
+  #addVariantBtn{
+    width:100%;
+    background:#eaf5f6;
+    color:var(--teal);
+    border:1px dashed var(--teal);
+    font-size:12.5px;
+    padding:9px;
+    margin-top:2px;
+  }
+  #addVariantBtn:hover{ background:#dcedef; }
+  .variant-hint{
+    font-size:10.5px;
+    color:var(--muted);
+    font-style:italic;
+    margin:0 0 10px 0;
+  }
+
+  /* ---------- PREVIEW PANEL ---------- */
+  .preview-wrap{
+    padding:32px;
+    display:flex;
+    justify-content:center;
+    overflow-y:auto;
+  }
+  .sheet{
+    background:var(--paper);
+    width:850px;
+    max-width:100%;
+    padding:40px 46px 50px 46px;
+    box-shadow:0 2px 18px rgba(20,30,40,.12);
+    font-family:"Georgia","Times New Roman",serif;
+    color:#222;
+  }
+  .banner{
+    background:var(--amber-bg);
+    border:1px solid var(--amber-brd);
+    color:var(--amber);
+    text-align:center;
+    font-family:"Inter",Arial,sans-serif;
+    font-size:11.5px;
+    font-weight:700;
+    padding:6px 10px;
+    margin-bottom:22px;
+    border-radius:3px;
+  }
+  .logo-upload-box{
+    width:110px;
+    height:110px;
+    margin:0 auto 10px auto;
+    border:2px dashed var(--teal);
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    cursor:pointer;
+    background:#f6fafb;
+    color:var(--teal);
+    font-family:"Inter",Arial,sans-serif;
+    text-align:center;
+    overflow:hidden;
+    transition:background .15s ease;
+  }
+  .logo-upload-box:hover{ background:#e9f4f6; }
+  .logo-upload-box svg{ width:22px; height:22px; margin-bottom:4px; }
+  .logo-upload-box span{ font-size:10px; font-weight:600; line-height:1.3; padding:0 6px; }
+  .logo-upload-box img{ width:100%; height:100%; object-fit:contain; }
+  .logo-row{ text-align:center; }
+  .logo-row img.report-logo{
+    max-width:150px;
+    max-height:110px;
+    object-fit:contain;
+    margin:0 auto 10px auto;
+    display:block;
+  }
+  .brandrow{ text-align:center; margin-bottom:4px; }
+  .brandname{
+    font-family:"Inter",Arial,sans-serif;
+    font-weight:800;
+    letter-spacing:.03em;
+    font-size:30px;
+    color:var(--navy);
+  }
+  .brandsub{
+    font-family:"Inter",Arial,sans-serif;
+    font-style:italic;
+    font-size:13px;
+    color:var(--muted);
+    margin-bottom:18px;
+  }
+  .doctitle{
+    text-align:center;
+    font-family:"Inter",Arial,sans-serif;
+    font-weight:800;
+    font-size:19px;
+    letter-spacing:.03em;
+    margin-bottom:18px;
+  }
+  .infogrid{
+    display:grid;
+    grid-template-columns: 150px 1fr 150px 1fr;
+    row-gap:6px;
+    column-gap:8px;
+    font-family:"Inter",Arial,sans-serif;
+    font-size:12.5px;
+    margin-bottom:18px;
+  }
+  .infogrid .lab{ font-weight:700; color:#333; }
+  .infogrid .val{ color:#222; }
+
+  .resultbox{
+    background:#DDEBF3;
+    border:2px solid var(--navy);
+    border-radius:3px;
+    padding:14px 16px;
+    font-size:13.5px;
+    line-height:1.55;
+    margin-bottom:20px;
+  }
+  .resultbox b{ font-family:"Inter",Arial,sans-serif; }
+  .resultbox p{ margin:0 0 8px 0; }
+  .resultbox p:last-child{ margin-bottom:0; }
+
+  h2.section{
+    font-family:"Inter",Arial,sans-serif;
+    font-size:14px;
+    font-weight:800;
+    color:var(--teal);
+    border-bottom:2px solid var(--teal);
+    padding-bottom:4px;
+    margin:22px 0 10px 0;
+    letter-spacing:.02em;
+  }
+  h3.subhead{
+    font-family:"Inter",Arial,sans-serif;
+    font-size:13px;
+    font-weight:700;
+    margin:14px 0 6px 0;
+  }
+  p.body-text{
+    font-size:13.5px;
+    line-height:1.6;
+    margin:0 0 10px 0;
+    white-space:pre-wrap;
+  }
+  table.findings{
+    width:100%;
+    border-collapse:collapse;
+    font-family:"Inter",Arial,sans-serif;
+    font-size:11.5px;
+    margin-bottom:6px;
+  }
+  table.findings th{
+    background:var(--navy);
+    color:#fff;
+    font-size:10.5px;
+    padding:7px 6px;
+    text-align:left;
+  }
+  table.findings td{
+    padding:7px 6px;
+    border-bottom:1px solid var(--line);
+    border-top:1px solid var(--line);
+    vertical-align:top;
+  }
+  table.findings tbody tr:nth-child(even){ background:#f7fafb; }
+  ul.reco{ margin:0 0 6px 20px; padding:0; font-size:13.5px; line-height:1.6; }
+  ul.reco li{ margin-bottom:4px; }
+  .footer-disclosure{
+    font-size:12px;
+    color:var(--muted);
+    font-family:"Inter",Arial,sans-serif;
+    margin-top:26px;
+    font-style:italic;
+  }
+  .pagefoot{
+    text-align:center;
+    font-family:"Inter",Arial,sans-serif;
+    font-size:10px;
+    color:#9aa7b3;
+    margin-top:30px;
+    border-top:1px solid var(--line);
+    padding-top:8px;
+  }
+
+  @media print{
+    .panel{ display:none; }
+    .layout{ display:block; }
+    .preview-wrap{ padding:0; }
+    .sheet{ box-shadow:none; width:auto; padding:0; }
+    body{ background:#fff; }
+  }
+  @media (max-width: 900px){
+    .layout{ grid-template-columns:1fr; }
+    .panel{ max-height:none; border-right:none; border-bottom:1px solid var(--line); }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ============ FORM PANEL ============ -->
+  <div class="panel" id="formPanel">
+    <h1>Variant Report Builder</h1>
+    <p class="sub">Fill in any variant's details below — the report on the right updates live. Supports single or multiple variants, in one gene or across several genes.</p>
+
+    <fieldset>
+      <legend>Load Pipeline JSON</legend>
+      <label for="jsonFileInput">Clinical-report JSON</label>
+      <input type="file" id="jsonFileInput" accept=".json,application/json">
+      <p class="auto-note" id="jsonLoadStatus">Choose the draft JSON generated by the pipeline. It is read locally in this browser.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Lab / Letterhead</legend>
+      <label>Lab logo</label>
+      <div class="logo-upload-box" id="logoUploadBox" onclick="document.getElementById('logoFileInput').click();">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+        <span>Click to upload logo</span>
+      </div>
+      <input type="file" id="logoFileInput" accept="image/*" style="display:none">
+      <label>Lab name</label>
+      <input type="text" id="labName" value="Genosphere Clinical Genome Center">
+      <label>Lab subtitle</label>
+      <input type="text" id="labSub" value="Clinical Genome Center — Variant Interpretation">
+      <label>Signatory line (footer)</label>
+      <input type="text" id="signatory" value="Prepared for educational demonstration; not clinically signed out.">
+    </fieldset>
+
+    <fieldset>
+      <legend>Patient Info</legend>
+      <div class="row2">
+        <div><label>Patient name</label><input type="text" id="pName" value="Synthetic Example"></div>
+        <div><label>Sex</label>
+          <select id="pSex"><option>Female</option><option>Male</option><option selected>Other/Unspecified</option></select>
+        </div>
+      </div>
+      <div class="row2">
+        <div><label>Date of birth</label><input type="date" id="pDob" value=""></div>
+        <div><label>Case ID</label><input type="text" id="caseId" value="SYNTHETIC-DEMO"></div>
+      </div>
+      <label>Indication for testing</label>
+      <input type="text" id="indication" value="Synthetic demonstration case">
+      <div class="row2">
+        <div><label>Ordering physician</label><input type="text" id="physician" value="Not applicable — synthetic case"></div>
+        <div><label>Account #</label><input type="text" id="account" value="SYNTHETIC"></div>
+      </div>
+      <div class="row2">
+        <div><label>Specimen</label><input type="text" id="specimen" value="Synthetic GRCh38 VCF dataset"></div>
+        <div><label>Reported date</label><input type="date" id="reportDate" value=""></div>
+      </div>
+      <div class="row2">
+        <div><label>Collected</label><input type="date" id="collected" value=""></div>
+        <div><label>Received</label><input type="date" id="received" value=""></div>
+      </div>
+    </fieldset>
+
+    <fieldset id="variantsFieldset">
+      <legend>Variants / Findings</legend>
+      <p class="variant-hint">Add one card per variant. Same gene repeated across cards = compound-het / multi-variant single-gene case. Different genes = multi-locus / dual-diagnosis case. The Test Result &amp; Findings table below adjust automatically.</p>
+      <div id="variantsContainer"></div>
+      <button type="button" id="addVariantBtn" onclick="addVariant()">+ Add another variant</button>
+    </fieldset>
+
+    <fieldset>
+      <legend>Test Result Summary <span style="font-weight:400;color:#9aa7b3;text-transform:none;">(auto-generated)</span></legend>
+      <div class="auto-preview" id="panelTestResultPreview"></div>
+      <p class="auto-note">Built automatically from all Variant/Finding cards above — one sentence per gene, combining multiple variants in the same gene, and adding a multi-gene intro line when more than one gene is involved.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Narrative Content</legend>
+      <label>Patient phenotype</label>
+      <textarea id="phenotype">Fatigue, arthralgia (joint pain), elevated serum ferritin and transferrin saturation on routine bloodwork; family history of iron overload.</textarea>
+      <label>Variant interpretation</label>
+      <textarea id="variantInfo">Describe the variant's known significance, functional evidence, population frequency, and in-silico predictions here.</textarea>
+      <label>Gene information</label>
+      <textarea id="geneInfo">Describe the gene's normal function and the disease spectrum associated with pathogenic variants here.</textarea>
+      <label>References (one per line)</label>
+      <textarea id="references"></textarea>
+      <label>Recommendations (one per line)</label>
+      <textarea id="recommendations">Clinical correlation is recommended.
+Genetic counseling is recommended to discuss inheritance and family implications.
+Confirmatory orthogonal testing is recommended before clinical use.
+As knowledge increases, periodic re-evaluation is appropriate.</textarea>
+    </fieldset>
+
+    <div class="actions">
+      <button id="saveJsonBtn" type="button" onclick="downloadReviewedJson()" style="background:var(--navy);color:#fff;">Save Reviewed JSON</button>
+      <button id="printBtn" onclick="window.print()">🖨 Print / Save as PDF</button>
+      <button id="resetBtn" onclick="location.reload()">Reset fields</button>
+      <div class="hint">Client-side only — nothing is uploaded or saved anywhere.</div>
+    </div>
+  </div>
+
+  <!-- ============ PREVIEW / REPORT ============ -->
+  <div class="preview-wrap">
+    <div class="sheet" id="sheet">
+
+      <div class="logo-row" id="outLogoRow" style="display:none;">
+        <img class="report-logo" id="outLogoImg" src="" alt="Lab logo">
+      </div>
+
+      <div class="brandrow"><span class="brandname" id="outLabName"></span></div>
+      <div class="brandsub" style="text-align:center" id="outLabSub"></div>
+      <div class="doctitle">WGS FINAL REPORT</div>
+
+      <div class="infogrid">
+        <div class="lab">Patient's Name</div><div class="val" id="outPName"></div>
+        <div class="lab">Ordering Physician</div><div class="val" id="outPhysician"></div>
+        <div class="lab">Sex</div><div class="val" id="outPSex"></div>
+        <div class="lab">Account#</div><div class="val" id="outAccount"></div>
+        <div class="lab">Date of Birth</div><div class="val" id="outPDob"></div>
+        <div class="lab">Specimen</div><div class="val" id="outSpecimen"></div>
+        <div class="lab">Indication</div><div class="val" id="outIndication"></div>
+        <div class="lab">Collected/Received</div><div class="val" id="outCollRec"></div>
+        <div class="lab">Case ID</div><div class="val" id="outCaseId"></div>
+        <div class="lab">Reported</div><div class="val" id="outReportDate"></div>
+      </div>
+
+      <div class="resultbox" id="outTestResultBox">
+        <div id="outTestResult"></div>
+      </div>
+
+      <h2 class="section">PATIENT PHENOTYPE</h2>
+      <p class="body-text" id="outPhenotype"></p>
+
+      <h2 class="section">PRIMARY FINDINGS</h2>
+      <table class="findings">
+        <thead><tr>
+          <th>Confirmation</th><th>Gene &amp; Transcript</th><th>Condition</th>
+          <th>Chr:Position</th><th>Variant</th><th>Zygosity</th><th>Inheritance / Class.</th><th>ClinPGx Findings</th>
+        </tr></thead>
+        <tbody id="outFindingsBody"></tbody>
+      </table>
+
+      <h2 class="section">INTERPRETATION</h2>
+      <h3 class="subhead">Variant Information</h3>
+      <p class="body-text" id="outVariantInfo"></p>
+      <h3 class="subhead">Gene Information</h3>
+      <p class="body-text" id="outGeneInfo"></p>
+
+      <h2 class="section">REFERENCES</h2>
+      <div id="outReferences"></div>
+
+      <h2 class="section">RECOMMENDATIONS</h2>
+      <ul class="reco" id="outRecommendations"></ul>
+
+      <div class="footer-disclosure" id="outSignatory"></div>
+      <div class="pagefoot">Template generated report — for illustrative/educational use. Confirm all clinical content before use.</div>
+
+      <div class="banner" style="margin-top:22px; margin-bottom:0;">SYNTHETIC / TEMPLATE REPORT — Verify all fields before any real clinical use.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Report-level fields (everything EXCEPT the per-variant cards, which are handled separately below)
+  const ids = [
+    "labName","labSub","signatory","pName","pSex","pDob","caseId","indication",
+    "physician","account","specimen","reportDate","collected","received",
+    "phenotype","variantInfo","geneInfo","references","recommendations"
+  ];
+
+  const REPORT_SCHEMA_VERSION = "1.0";
+  let loadedReportJson = null;
+
+  // ---------- LOGO UPLOAD HANDLING ----------
+  let logoDataUrl = "";
+  const logoFileInput = document.getElementById("logoFileInput");
+  const logoUploadBox = document.getElementById("logoUploadBox");
+
+  logoFileInput.addEventListener("change", function(e){
+    const file = e.target.files && e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev){
+      logoDataUrl = ev.target.result;
+      logoUploadBox.innerHTML = "";
+      const previewImg = document.createElement("img");
+      previewImg.src = logoDataUrl;
+      logoUploadBox.appendChild(previewImg);
+      render();
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function esc(str){
+    const d = document.createElement("div");
+    d.innerText = str || "";
+    return d.innerHTML;
+  }
+
+  function fmtDate(iso){
+    if(!iso) return "";
+    const parts = iso.split("-");
+    if(parts.length !== 3) return iso;
+    const [y,m,d] = parts;
+    return `${d}/${m}/${y}`;
+  }
+
+  /* ================================================================
+     VARIANT CARDS — dynamic list, one card per variant.
+     Multiple cards with the SAME gene  -> treated as a multi-variant
+       single-gene finding (e.g. compound heterozygous).
+     Multiple cards with DIFFERENT genes -> treated as a multi-gene /
+       multi-locus finding, one paragraph + one table row per variant.
+  ================================================================= */
+  let variantIdCounter = 0;
+
+  function variantCardTemplate(id){
+    return `
+      <input type="hidden" data-field="findingType" value="small_variant">
+      <input type="hidden" data-field="reportRole" value="additional_candidate">
+      <div class="variant-card-head">
+        <span class="variant-num">Variant</span>
+        <button type="button" class="removeVariantBtn" onclick="removeVariant(${id})">✕ Remove</button>
+      </div>
+      <div class="row2">
+        <div class="ac-wrap">
+          <label>Gene <span style="font-weight:400;color:#9aa7b3;">(type to search)</span></label>
+          <input type="text" class="v-gene" data-field="gene" autocomplete="off">
+          <div class="ac-list v-geneAcList"></div>
+        </div>
+        <div><label>Transcript</label><input type="text" data-field="transcript"></div>
+      </div>
+      <div class="ac-wrap">
+        <label>Condition / disease <span style="font-weight:400;color:#9aa7b3;">(type to search)</span></label>
+        <input type="text" class="v-condition" data-field="condition" autocomplete="off">
+        <div class="ac-list v-conditionAcList"></div>
+      </div>
+      <div class="row2">
+        <div><label>Chromosome:Position</label><input type="text" data-field="chrPos"></div>
+        <div><label>Zygosity</label>
+          <select data-field="zygosity"><option>Homozygous</option><option>Heterozygous</option><option>Compound heterozygous</option><option>Hemizygous</option></select>
+        </div>
+      </div>
+      <div class="row2">
+        <div><label>HGVS (DNA)</label><input type="text" data-field="hgvsDna"></div>
+        <div><label>HGVS (Protein)</label><input type="text" data-field="hgvsProt"></div>
+      </div>
+      <div class="row2">
+        <div><label>Inheritance</label>
+          <select data-field="inheritance">
+            <option>Autosomal Recessive</option>
+            <option>Autosomal Dominant</option>
+            <option>X-linked Recessive</option>
+            <option>X-linked Dominant</option>
+            <option>Y-linked</option>
+            <option>Mitochondrial</option>
+            <option>Multifactorial / Complex</option>
+            <option>De novo</option>
+            <option>Unknown</option>
+          </select>
+        </div>
+        <div><label>Classification</label>
+          <select data-field="classification"><option>Pathogenic</option><option>Likely Pathogenic</option><option>VUS</option><option>Likely Benign</option><option>Benign</option></select>
+        </div>
+      </div>
+      <label>Confirmation status</label>
+      <input type="text" data-field="confirmStatus">
+      <label>Confirmation line (editable, per variant)</label>
+      <input type="text" data-field="confirmLine">
+      <label>ClinPGx finding <span style="font-weight:400;color:#9aa7b3;">(leave blank if this variant is not a pharmacogenomics finding)</span></label>
+      <textarea data-field="clinpgx" placeholder="e.g. CYP2C19 *2/*2 — Poor Metabolizer; reduced clopidogrel activation, consider alternative antiplatelet therapy (CPIC Level A)."></textarea>
+    `;
+  }
+
+  function addVariant(prefill){
+    const id = variantIdCounter++;
+    const container = document.getElementById("variantsContainer");
+    const card = document.createElement("div");
+    card.className = "variant-card";
+    card.dataset.vid = id;
+    card.innerHTML = variantCardTemplate(id);
+    container.appendChild(card);
+
+    if(prefill){
+      Object.keys(prefill).forEach(k => {
+        const el = card.querySelector(`[data-field="${k}"]`);
+        if(el) el.value = prefill[k];
+      });
+    }
+
+    setupAutocomplete(
+      card.querySelector(".v-gene"), card.querySelector(".v-geneAcList"),
+      (q) => `https://clinicaltables.nlm.nih.gov/api/genes/v3/search?terms=${encodeURIComponent(q)}&df=symbol,name&maxList=8`,
+      (data) => {
+        const rows = data[3] || [];
+        return rows.map(r => ({ value: r[0], html: `<b>${esc2(r[0])}</b><div class="ac-sub">${esc2(r[1]||"")}</div>` }));
+      }
+    );
+    setupAutocomplete(
+      card.querySelector(".v-condition"), card.querySelector(".v-conditionAcList"),
+      (q) => `https://clinicaltables.nlm.nih.gov/api/conditions/v3/search?terms=${encodeURIComponent(q)}&df=primary_name&maxList=8`,
+      (data) => {
+        const rows = data[3] || [];
+        return rows.map(r => ({ value: r[0], html: `<b>${esc2(r[0])}</b>` }));
+      }
+    );
+
+    card.querySelectorAll("[data-field]").forEach(el => {
+      el.addEventListener("input", render);
+      el.addEventListener("change", render);
+    });
+
+    renumberVariants();
+    render();
+  }
+
+  function removeVariant(id){
+    const cards = document.querySelectorAll(".variant-card");
+    if(cards.length <= 1){
+      alert("Kam az kam 1 variant zaroori hai — report mein at least ek finding honi chahiye.");
+      return;
+    }
+    const card = document.querySelector(`.variant-card[data-vid="${id}"]`);
+    if(card) card.remove();
+    renumberVariants();
+    render();
+  }
+
+  function renumberVariants(){
+    document.querySelectorAll(".variant-card").forEach((card, i) => {
+      card.querySelector(".variant-num").innerText = "Variant " + (i + 1);
+    });
+  }
+
+  function collectVariants(){
+    return Array.from(document.querySelectorAll(".variant-card")).map(card => {
+      const v = {};
+      card.querySelectorAll("[data-field]").forEach(el => { v[el.dataset.field] = el.value; });
+      return v;
+    });
+  }
+
+  function setJsonStatus(message, isError){
+    const status = document.getElementById("jsonLoadStatus");
+    status.innerText = message;
+    status.style.color = isError ? "var(--danger)" : "var(--muted)";
+    status.style.fontWeight = isError ? "700" : "400";
+  }
+
+  function setFieldValue(id, value){
+    const element = document.getElementById(id);
+    if(!element) return;
+    element.value = value === null || value === undefined ? "" : String(value);
+  }
+
+  function normaliseSex(value){
+    const text = String(value || "").trim().toLowerCase();
+    if(text === "female" || text === "f") return "Female";
+    if(text === "male" || text === "m") return "Male";
+    return "Other/Unspecified";
+  }
+
+  function normaliseZygosity(value){
+    const text = String(value || "").trim().toLowerCase();
+    if(text.includes("compound") && text.includes("heterozyg")) return "Compound heterozygous";
+    if(text.includes("hemizyg") || text.includes("haploid")) return "Hemizygous";
+    if(text.includes("homozyg") && !text.includes("reference")) return "Homozygous";
+    if(text.includes("heterozyg")) return "Heterozygous";
+    return "Heterozygous";
+  }
+
+  function normaliseInheritance(value){
+    const text = String(value || "").trim().toLowerCase().replaceAll("_", " ");
+    if(text.includes("biallelic") || text.includes("autosomal recessive")) return "Autosomal Recessive";
+    if(text.includes("monoallelic") || text.includes("autosomal dominant")) return "Autosomal Dominant";
+    if(text.includes("x linked recessive")) return "X-linked Recessive";
+    if(text.includes("x linked dominant")) return "X-linked Dominant";
+    if(text.includes("y linked")) return "Y-linked";
+    if(text.includes("mitochond")) return "Mitochondrial";
+    if(text.includes("de novo")) return "De novo";
+    if(text.includes("multifactor") || text.includes("complex")) return "Multifactorial / Complex";
+    return "Unknown";
+  }
+
+  function normaliseClassification(value){
+    const text = String(value || "").trim().toLowerCase().replaceAll("_", " ");
+    if(text.includes("likely pathogenic")) return "Likely Pathogenic";
+    if(text.includes("pathogenic")) return "Pathogenic";
+    if(text.includes("likely benign")) return "Likely Benign";
+    if(text === "benign") return "Benign";
+    return "VUS";
+  }
+
+  function arrayToLines(value){
+    if(!Array.isArray(value)) return String(value || "");
+    return value.map(item => {
+      if(typeof item === "string") return item;
+      if(item && typeof item === "object"){
+        return item.citation || item.text || item.title || "";
+      }
+      return "";
+    }).filter(Boolean).join("\n");
+  }
+
+  function findingToCard(finding){
+    const coordinate =
+      finding.coordinate && typeof finding.coordinate === "object"
+        ? finding.coordinate
+        : {};
+    const hgvs =
+      finding.hgvs && typeof finding.hgvs === "object"
+        ? finding.hgvs
+        : {};
+    const classification =
+      finding.classification && typeof finding.classification === "object"
+        ? finding.classification
+        : {};
+    const confirmation =
+      finding.confirmation && typeof finding.confirmation === "object"
+        ? finding.confirmation
+        : {};
+    const clinpgx =
+      finding.clinpgx && typeof finding.clinpgx === "object"
+        ? finding.clinpgx
+        : {};
+
+    const displayCoordinate =
+      coordinate.display ||
+      finding.chrPos ||
+      [
+        coordinate.genome_build || "",
+        coordinate.chromosome && coordinate.position
+          ? `${coordinate.chromosome}:${coordinate.position}`
+          : ""
+      ].filter(Boolean).join(" ");
+
+    let clinpgxText = "";
+    if(typeof clinpgx.summary === "string"){
+      clinpgxText = clinpgx.summary;
+    } else if(typeof finding.clinpgx_summary === "string"){
+      clinpgxText = finding.clinpgx_summary;
+    } else if(typeof finding.clinpgx === "string"){
+      clinpgxText = finding.clinpgx;
+    }
+
+    return {
+      findingType: finding.finding_type || "small_variant",
+      reportRole: finding.report_role || "",
+      gene: finding.gene || "",
+      transcript: finding.transcript || "",
+      condition: finding.condition || finding.disease_name || "",
+      chrPos: displayCoordinate,
+      zygosity: normaliseZygosity(finding.zygosity),
+      hgvsDna: hgvs.coding || finding.hgvsc || finding.hgvsDna || "",
+      hgvsProt: hgvs.protein || finding.hgvsp || finding.hgvsProt || "",
+      inheritance: normaliseInheritance(finding.inheritance),
+      classification: normaliseClassification(
+        classification.label ||
+        classification.value ||
+        finding.classification
+      ),
+      confirmStatus:
+        confirmation.status ||
+        finding.confirmStatus ||
+        "Not independently confirmed",
+      confirmLine:
+        confirmation.statement ||
+        finding.confirmLine ||
+        "Orthogonal confirmation was not performed within this workflow.",
+      clinpgx: clinpgxText
+    };
+  }
+
+  function validateReportJson(data){
+    if(!data || typeof data !== "object" || Array.isArray(data)){
+      throw new Error("The selected file must contain one JSON object.");
+    }
+
+    if(String(data.schema_version || "") !== REPORT_SCHEMA_VERSION){
+      throw new Error(
+        `Unsupported schema version: ${data.schema_version || "missing"}. Expected ${REPORT_SCHEMA_VERSION}.`
+      );
+    }
+
+    if(!Array.isArray(data.findings) || data.findings.length === 0){
+      throw new Error("The JSON does not contain findings[].");
+    }
+  }
+
+  function loadClinicalReportJson(data){
+    validateReportJson(data);
+    loadedReportJson = JSON.parse(JSON.stringify(data));
+
+    const laboratory =
+      data.laboratory && typeof data.laboratory === "object"
+        ? data.laboratory
+        : {};
+    const patient =
+      data.patient && typeof data.patient === "object"
+        ? data.patient
+        : (
+            data.case && typeof data.case === "object"
+              ? data.case
+              : {}
+          );
+    const narrative =
+      data.narrative && typeof data.narrative === "object"
+        ? data.narrative
+        : (
+            data.interpretation && typeof data.interpretation === "object"
+              ? data.interpretation
+              : {}
+          );
+
+    setFieldValue("labName", laboratory.name);
+    setFieldValue("labSub", laboratory.subtitle);
+    setFieldValue("signatory", laboratory.signatory);
+
+    setFieldValue("pName", patient.patient_name || patient.name);
+    setFieldValue("pSex", normaliseSex(patient.sex));
+    setFieldValue("pDob", patient.date_of_birth);
+    setFieldValue("caseId", patient.case_id || data.case_id);
+    setFieldValue("indication", patient.indication);
+    setFieldValue("physician", patient.ordering_physician);
+    setFieldValue("account", patient.account_number);
+    setFieldValue("specimen", patient.specimen);
+    setFieldValue("reportDate", patient.reported_date);
+    setFieldValue("collected", patient.collected_date);
+    setFieldValue("received", patient.received_date);
+
+    setFieldValue(
+      "phenotype",
+      narrative.patient_phenotype ||
+      narrative.phenotype ||
+      (data.phenotype && data.phenotype.summary) ||
+      ""
+    );
+    setFieldValue(
+      "variantInfo",
+      narrative.variant_information ||
+      narrative.variant_interpretation ||
+      ""
+    );
+    setFieldValue(
+      "geneInfo",
+      narrative.gene_information || ""
+    );
+    setFieldValue("references", arrayToLines(data.references));
+    setFieldValue("recommendations", arrayToLines(data.recommendations));
+
+    document.getElementById("variantsContainer").innerHTML = "";
+    data.findings.forEach(finding => addVariant(findingToCard(finding)));
+
+    setJsonStatus(
+      `Loaded ${data.findings.length} finding(s). Review all fields before saving or printing.`,
+      false
+    );
+    render();
+  }
+
+  function currentReportJson(){
+    const report =
+      loadedReportJson && typeof loadedReportJson === "object"
+        ? JSON.parse(JSON.stringify(loadedReportJson))
+        : {};
+
+    report.schema_version = REPORT_SCHEMA_VERSION;
+    report.report_status = "reviewed_draft";
+
+    report.laboratory = {
+      ...(report.laboratory || {}),
+      name: document.getElementById("labName").value,
+      subtitle: document.getElementById("labSub").value,
+      signatory: document.getElementById("signatory").value
+    };
+
+    report.patient = {
+      ...(report.patient || report.case || {}),
+      patient_name: document.getElementById("pName").value || null,
+      sex: document.getElementById("pSex").value,
+      date_of_birth: document.getElementById("pDob").value || null,
+      case_id: document.getElementById("caseId").value,
+      indication: document.getElementById("indication").value || null,
+      ordering_physician: document.getElementById("physician").value || null,
+      account_number: document.getElementById("account").value || null,
+      specimen: document.getElementById("specimen").value || null,
+      reported_date: document.getElementById("reportDate").value || null,
+      collected_date: document.getElementById("collected").value || null,
+      received_date: document.getElementById("received").value || null
+    };
+    delete report.case;
+
+    const oldFindings = Array.isArray(report.findings)
+      ? report.findings
+      : [];
+
+    report.findings = collectVariants().map((variant, index) => {
+      const previous =
+        oldFindings[index] && typeof oldFindings[index] === "object"
+          ? oldFindings[index]
+          : {};
+
+      return {
+        ...previous,
+        finding_id: previous.finding_id || `F${index + 1}`,
+        finding_type:
+          variant.findingType ||
+          previous.finding_type ||
+          "small_variant",
+        report_role:
+          variant.reportRole ||
+          previous.report_role ||
+          (index === 0 ? "primary" : "additional_candidate"),
+        gene: variant.gene,
+        transcript: variant.transcript || null,
+        condition: variant.condition || null,
+        coordinate: {
+          ...(previous.coordinate || {}),
+          display: variant.chrPos || null
+        },
+        hgvs: {
+          ...(previous.hgvs || {}),
+          coding: variant.hgvsDna || null,
+          protein: variant.hgvsProt || null
+        },
+        zygosity: variant.zygosity,
+        inheritance: variant.inheritance,
+        classification: {
+          ...(previous.classification || {}),
+          label: variant.classification,
+          analyst_reviewed: true
+        },
+        confirmation: {
+          ...(previous.confirmation || {}),
+          status: variant.confirmStatus,
+          statement: variant.confirmLine
+        },
+        clinpgx: {
+          ...(previous.clinpgx || {}),
+          summary: variant.clinpgx || ""
+        }
+      };
+    });
+
+    report.narrative = {
+      ...(report.narrative || {}),
+      patient_phenotype: document.getElementById("phenotype").value,
+      variant_information: document.getElementById("variantInfo").value,
+      gene_information: document.getElementById("geneInfo").value
+    };
+
+    report.references = document.getElementById("references").value
+      .split("\n")
+      .map(line => line.trim())
+      .filter(Boolean);
+
+    report.recommendations = document.getElementById("recommendations").value
+      .split("\n")
+      .map(line => line.trim())
+      .filter(Boolean);
+
+    report.review = {
+      ...(report.review || {}),
+      analyst_review_required: true,
+      reviewed_in_browser: true,
+      reviewed_utc: new Date().toISOString()
+    };
+
+    return report;
+  }
+
+  function safeFilename(value){
+    return String(value || "case")
+      .replace(/[^A-Za-z0-9._-]+/g, "_")
+      .replace(/^_+|_+$/g, "") || "case";
+  }
+
+  function downloadReviewedJson(){
+    try{
+      const data = currentReportJson();
+      const caseId = safeFilename(data.patient && data.patient.case_id);
+      const blob = new Blob(
+        [JSON.stringify(data, null, 2) + "\n"],
+        {type:"application/json"}
+      );
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${caseId}.report_reviewed.json`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      setJsonStatus("Reviewed JSON saved locally.", false);
+    } catch(error){
+      console.error(error);
+      setJsonStatus(`Unable to save JSON: ${error.message}`, true);
+    }
+  }
+
+  async function loadJsonFile(file){
+    if(!file) return;
+
+    const text = await file.text();
+    const data = JSON.parse(text);
+    loadClinicalReportJson(data);
+  }
+
+  async function autoLoadJsonFromUrl(){
+    const params = new URLSearchParams(window.location.search);
+    const path = params.get("data");
+    if(!path) return;
+
+    try{
+      const response = await fetch(path, {cache:"no-store"});
+      if(!response.ok){
+        throw new Error(`HTTP ${response.status}`);
+      }
+      const data = await response.json();
+      loadClinicalReportJson(data);
+    } catch(error){
+      console.error(error);
+      setJsonStatus(
+        `Automatic JSON loading failed: ${error.message}`,
+        true
+      );
+    }
+  }
+
+  /* ================= AUTO-GENERATED TEST RESULT (multi-variant / multi-gene aware) =================
+     - Variants are grouped by gene (case-insensitive).
+     - A gene group with exactly 1 variant uses the original single-variant sentence.
+     - A gene group with 2+ variants (e.g. compound heterozygous) is combined into one sentence
+       listing every HGVS notation for that gene.
+     - When 2+ distinct genes are involved, a short multi-gene intro line is added, and each
+       gene group gets its own paragraph.
+  ===================================================================================================*/
+  function sentenceForGeneGroup(gene, items){
+    if(items.length === 1){
+      const v = items[0];
+      const classification = (v.classification || "").trim();
+      const zygosity = (v.zygosity || "").trim();
+      const variantParen = [v.hgvsDna, v.hgvsProt].filter(Boolean).join(", ");
+      const variantPart = variantParen ? ` (${variantParen})` : "";
+      const condition = (v.condition || "").trim();
+      const confirmLine = (v.confirmLine || "").trim();
+      const confirmPart = confirmLine ? ` ${confirmLine}` : "";
+      return `A ${classification}, ${zygosity.toLowerCase()} variant in ${gene}${variantPart} was detected in this individual. ${classification} variant(s) in ${gene} are associated with ${condition}.${confirmPart}`;
+    }
+
+    // Multiple variants in the same gene (e.g. compound heterozygous)
+    const classifications = [...new Set(items.map(v => (v.classification || "").trim()).filter(Boolean))];
+    const classLabel = classifications.length === 1 ? classifications[0] : classifications.join("/");
+    const zygosities = [...new Set(items.map(v => (v.zygosity || "").trim().toLowerCase()).filter(Boolean))];
+    const zygLabel = zygosities.length === 1 ? zygosities[0] : "compound heterozygous";
+    const condition = (items[0].condition || "").trim();
+    const variantDescs = items.map(v => [v.hgvsDna, v.hgvsProt].filter(Boolean).join(", ")).filter(Boolean);
+    const confirmLines = [...new Set(items.map(v => (v.confirmLine || "").trim()).filter(Boolean))];
+    const confirmPart = confirmLines.length ? ` ${confirmLines.join(" ")}` : "";
+    const countWord = items.length === 2 ? "Two" : String(items.length);
+
+    return `${countWord} ${classLabel} variants in ${gene} were detected in this individual (${zygLabel}): ${variantDescs.join(" and ")}. ${classLabel} variants in ${gene} are associated with ${condition}.${confirmPart}`;
+  }
+
+  function generateTestResult(variants){
+    if(!variants.length) return [];
+    const groups = [];
+    variants.forEach(v => {
+      const g = (v.gene || "").trim();
+      let grp = groups.find(x => x.gene.toLowerCase() === g.toLowerCase());
+      if(!grp){ grp = { gene: g, items: [] }; groups.push(grp); }
+      grp.items.push(v);
+    });
+
+    const paragraphs = [];
+    if(groups.length > 1){
+      const geneList = groups.map(g => g.gene).join(", ");
+      paragraphs.push(`Findings involving ${groups.length} genes (${geneList}) were identified in this individual.`);
+    }
+    groups.forEach(grp => paragraphs.push(sentenceForGeneGroup(grp.gene, grp.items)));
+    return paragraphs;
+  }
+
+  function render(){
+    const v = {};
+    ids.forEach(id => { v[id] = document.getElementById(id).value; });
+
+    const outLogoRow = document.getElementById("outLogoRow");
+    const outLogoImg = document.getElementById("outLogoImg");
+    if(logoDataUrl){
+      outLogoImg.src = logoDataUrl;
+      outLogoRow.style.display = "block";
+    } else {
+      outLogoImg.src = "";
+      outLogoRow.style.display = "none";
+    }
+
+    document.getElementById("outLabName").innerText = v.labName;
+    document.getElementById("outLabSub").innerText = v.labSub;
+    document.getElementById("outPName").innerText = v.pName;
+    document.getElementById("outPhysician").innerText = v.physician;
+    document.getElementById("outPSex").innerText = v.pSex;
+    document.getElementById("outAccount").innerText = v.account;
+    document.getElementById("outPDob").innerText = fmtDate(v.pDob);
+    document.getElementById("outSpecimen").innerText = v.specimen;
+    document.getElementById("outIndication").innerText = v.indication;
+    document.getElementById("outCollRec").innerText = fmtDate(v.collected) + " / " + fmtDate(v.received);
+    document.getElementById("outCaseId").innerText = v.caseId;
+    document.getElementById("outReportDate").innerText = fmtDate(v.reportDate);
+
+    const variants = collectVariants();
+
+    // ---- Test Result box (one <p> per paragraph: intro line if multi-gene, then one per gene) ----
+    const paragraphs = generateTestResult(variants);
+    const resultBoxEl = document.getElementById("outTestResult");
+    resultBoxEl.innerHTML = "";
+    paragraphs.forEach((para, i) => {
+      const p = document.createElement("p");
+      if(i === 0){
+        const b = document.createElement("b");
+        b.innerText = "TEST RESULT: ";
+        p.appendChild(b);
+        p.appendChild(document.createTextNode(para));
+      } else {
+        p.innerText = para;
+      }
+      resultBoxEl.appendChild(p);
+    });
+    document.getElementById("panelTestResultPreview").innerText = paragraphs.join("\n\n");
+
+    document.getElementById("outPhenotype").innerText = v.phenotype;
+
+    // ---- Primary Findings table: one row per variant ----
+    const body = document.getElementById("outFindingsBody");
+    body.innerHTML = "";
+    variants.forEach(vv => {
+      const tr = document.createElement("tr");
+      const cells = [
+        vv.confirmStatus || "",
+        esc(vv.gene || "") + "<br>" + esc(vv.transcript || ""),
+        vv.condition || "",
+        vv.chrPos || "",
+        esc(vv.hgvsDna || "") + "<br>" + esc(vv.hgvsProt || ""),
+        vv.zygosity || "",
+        (vv.inheritance || "") + " / " + (vv.classification || ""),
+        (vv.clinpgx || "").trim() || "—"
+      ];
+      cells.forEach((c, idx) => {
+        const td = document.createElement("td");
+        if(idx === 1 || idx === 4){ td.innerHTML = c; } else { td.innerText = c; }
+        if(idx === 7){ td.style.whiteSpace = "pre-wrap"; td.style.maxWidth = "170px"; }
+        tr.appendChild(td);
+      });
+      body.appendChild(tr);
+    });
+
+    document.getElementById("outVariantInfo").innerText = v.variantInfo;
+    document.getElementById("outGeneInfo").innerText = v.geneInfo;
+
+    const refBox = document.getElementById("outReferences");
+    refBox.innerHTML = "";
+    v.references.split("\n").filter(l => l.trim()).forEach(line => {
+      const p = document.createElement("p");
+      p.className = "body-text";
+      p.innerText = line.trim();
+      refBox.appendChild(p);
+    });
+
+    const recoBox = document.getElementById("outRecommendations");
+    recoBox.innerHTML = "";
+    v.recommendations.split("\n").filter(l => l.trim()).forEach(line => {
+      const li = document.createElement("li");
+      li.innerText = line.trim();
+      recoBox.appendChild(li);
+    });
+
+    document.getElementById("outSignatory").innerText = v.signatory;
+  }
+
+  ids.forEach(id => {
+    document.getElementById(id).addEventListener("input", render);
+  });
+
+  /* ================= AUTOCOMPLETE (NIH Clinical Tables — HGNC genes & Medical Conditions) =================
+     Rewritten to take element references (not fixed ids) so it can be wired up per dynamically-added
+     variant card. Behaviour/API sources are unchanged from the original.
+  ============================================================================================================*/
+  function setupAutocomplete(input, list, apiUrlFn, formatFn){
+    let debounceTimer = null;
+    let currentItems = [];
+    let activeIndex = -1;
+
+    function hide(){ list.classList.remove("show"); list.innerHTML = ""; activeIndex = -1; }
+
+    function showLoading(){
+      list.innerHTML = '<div class="ac-loading">Searching…</div>';
+      list.classList.add("show");
+    }
+
+    function renderList(items){
+      currentItems = items;
+      if(!items.length){ hide(); return; }
+      list.innerHTML = "";
+      items.forEach((item, i) => {
+        const row = document.createElement("div");
+        row.className = "ac-item";
+        row.innerHTML = item.html;
+        row.addEventListener("mousedown", (e) => {
+          e.preventDefault();
+          input.value = item.value;
+          hide();
+          render();
+        });
+        list.appendChild(row);
+      });
+      list.classList.add("show");
+    }
+
+    input.addEventListener("input", () => {
+      const q = input.value.trim();
+      clearTimeout(debounceTimer);
+      if(q.length < 2){ hide(); return; }
+      showLoading();
+      debounceTimer = setTimeout(async () => {
+        try {
+          const url = apiUrlFn(q);
+          const res = await fetch(url);
+          if(!res.ok) throw new Error("Lookup failed");
+          const data = await res.json();
+          renderList(formatFn(data));
+        } catch(err){
+          list.innerHTML = '<div class="ac-loading">No connection / no results — you can still type manually.</div>';
+          list.classList.add("show");
+        }
+      }, 300);
+    });
+
+    input.addEventListener("keydown", (e) => {
+      if(!list.classList.contains("show")) return;
+      const items = list.querySelectorAll(".ac-item");
+      if(e.key === "ArrowDown"){ e.preventDefault(); activeIndex = Math.min(activeIndex+1, items.length-1); }
+      else if(e.key === "ArrowUp"){ e.preventDefault(); activeIndex = Math.max(activeIndex-1, 0); }
+      else if(e.key === "Enter"){ if(activeIndex>=0 && currentItems[activeIndex]){ e.preventDefault(); input.value = currentItems[activeIndex].value; hide(); render(); } return; }
+      else if(e.key === "Escape"){ hide(); return; }
+      else { return; }
+      items.forEach((el,i) => el.classList.toggle("active", i===activeIndex));
+    });
+
+    document.addEventListener("click", (e) => {
+      if(!input.contains(e.target) && !list.contains(e.target)) hide();
+    });
+  }
+
+  function esc2(str){
+    const d = document.createElement("div");
+    d.innerText = str || "";
+    return d.innerHTML;
+  }
+
+  document.getElementById("jsonFileInput").addEventListener("change", async event => {
+    const file = event.target.files && event.target.files[0];
+    if(!file) return;
+
+    try{
+      await loadJsonFile(file);
+    } catch(error){
+      console.error(error);
+      setJsonStatus(`Unable to load JSON: ${error.message}`, true);
+    }
+  });
+
+  // ---------- Seed the form with the original single-variant example (HFE / Hereditary Hemochromatosis) ----------
+  addVariant({
+    gene: "HFE",
+    transcript: "NM_000410.4",
+    condition: "Hereditary Hemochromatosis, Type 1 [MIM: 235200]",
+    chrPos: "6:26,091,179",
+    zygosity: "Homozygous",
+    hgvsDna: "c.845G>A",
+    hgvsProt: "p.Cys282Tyr",
+    inheritance: "Autosomal Recessive",
+    classification: "Pathogenic",
+    confirmStatus: "Not independently confirmed",
+    confirmLine: "Orthogonal confirmation was not performed within this workflow."
+  });
+
+  render();
+  autoLoadJsonFromUrl();
+</script>
+
+</body>
+</html>
