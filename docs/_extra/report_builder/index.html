@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Variant Report Generator</title>
+<style>
+  :root{
+    --navy:#1F4E79;
+    --teal:#0F7C8A;
+    --paper:#ffffff;
+    --canvas:#eef1f4;
+    --ink:#1c2733;
+    --muted:#5b6b7a;
+    --line:#d7dee5;
+    --amber:#7F6000;
+    --amber-bg:#FFF2CC;
+    --amber-brd:#BF9000;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
+    background:var(--canvas);
+    color:var(--ink);
+  }
+  .layout{
+    display:grid;
+    grid-template-columns: 380px 1fr;
+    min-height:100vh;
+  }
+  /* ---------- FORM PANEL ---------- */
+  .panel{
+    background:var(--paper);
+    border-right:1px solid var(--line);
+    padding:20px 22px 80px 22px;
+    overflow-y:auto;
+    max-height:100vh;
+  }
+  .panel h1{
+    font-size:18px;
+    margin:0 0 2px 0;
+    color:var(--navy);
+  }
+  .panel p.sub{
+    margin:0 0 20px 0;
+    font-size:12.5px;
+    color:var(--muted);
+  }
+  fieldset{
+    border:1px solid var(--line);
+    border-radius:8px;
+    margin:0 0 16px 0;
+    padding:12px 14px 14px 14px;
+  }
+  legend{
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    color:var(--teal);
+    padding:0 6px;
+  }
+  label{
+    display:block;
+    font-size:11.5px;
+    font-weight:600;
+    color:var(--muted);
+    margin:8px 0 3px 0;
+  }
+  label:first-child{margin-top:0;}
+  input[type=text], input[type=date], textarea, select{
+    width:100%;
+    font-family:inherit;
+    font-size:13px;
+    padding:7px 8px;
+    border:1px solid var(--line);
+    border-radius:5px;
+    background:#fbfcfd;
+    color:var(--ink);
+  }
+  textarea{resize:vertical; min-height:56px; line-height:1.4;}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .actions{
+    position:sticky;
+    bottom:0;
+    background:var(--paper);
+    padding-top:10px;
+    margin-top:4px;
+  }
+  button{
+    width:100%;
+    padding:11px;
+    border:none;
+    border-radius:6px;
+    font-size:13.5px;
+    font-weight:700;
+    cursor:pointer;
+    margin-bottom:8px;
+  }
+  #printBtn{ background:var(--teal); color:#fff; }
+  #printBtn:hover{ background:#0c6773; }
+  #resetBtn{ background:#eef1f4; color:var(--ink); border:1px solid var(--line); }
+  #resetBtn:hover{ background:#e2e7ec; }
+  .hint{ font-size:11px; color:var(--muted); margin-top:6px; text-align:center; }
+
+  /* ---------- AUTO-GENERATED PREVIEW BOX (inside panel) ---------- */
+  .auto-preview{
+    background:#f6fafb;
+    border:1px dashed var(--teal);
+    border-radius:6px;
+    padding:9px 10px;
+    font-size:12px;
+    line-height:1.5;
+    color:#28414a;
+    min-height:40px;
+    white-space:pre-wrap;
+  }
+  .auto-note{
+    font-size:10.5px;
+    color:var(--muted);
+    font-style:italic;
+    margin:4px 0 0 0;
+  }
+
+  /* ---------- AUTOCOMPLETE ---------- */
+  .ac-wrap{ position:relative; }
+  .ac-list{
+    position:absolute;
+    top:100%; left:0; right:0;
+    background:#fff;
+    border:1px solid var(--line);
+    border-top:none;
+    border-radius:0 0 6px 6px;
+    max-height:210px;
+    overflow-y:auto;
+    z-index:50;
+    box-shadow:0 6px 14px rgba(20,30,40,.12);
+    display:none;
+  }
+  .ac-list.show{ display:block; }
+  .ac-item{
+    padding:7px 9px;
+    font-size:12.5px;
+    cursor:pointer;
+    border-bottom:1px solid #f0f2f4;
+  }
+  .ac-item:last-child{ border-bottom:none; }
+  .ac-item:hover, .ac-item.active{ background:#eef6f8; }
+  .ac-item b{ color:var(--navy); }
+  .ac-sub{ color:var(--muted); font-size:11px; }
+  .ac-loading{ padding:7px 9px; font-size:12px; color:var(--muted); font-style:italic; }
+
+  /* ---------- PREVIEW PANEL ---------- */
+  .preview-wrap{
+    padding:32px;
+    display:flex;
+    justify-content:center;
+    overflow-y:auto;
+  }
+  .sheet{
+    background:var(--paper);
+    width:850px;
+    max-width:100%;
+    padding:40px 46px 50px 46px;
+    box-shadow:0 2px 18px rgba(20,30,40,.12);
+    font-family:"Georgia","Times New Roman",serif;
+    color:#222;
+  }
+  .banner{
+    background:var(--amber-bg);
+    border:1px solid var(--amber-brd);
+    color:var(--amber);
+    text-align:center;
+    font-family:"Inter",Arial,sans-serif;
+    font-size:11.5px;
+    font-weight:700;
+    padding:6px 10px;
+    margin-bottom:22px;
+    border-radius:3px;
+  }
+  .logo-upload-box{
+    width:110px;
+    height:110px;
+    margin:0 auto 10px auto;
+    border:2px dashed var(--teal);
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    cursor:pointer;
+    background:#f6fafb;
+    color:var(--teal);
+    font-family:"Inter",Arial,sans-serif;
+    text-align:center;
+    overflow:hidden;
+    transition:background .15s ease;
+  }
+  .logo-upload-box:hover{ background:#e9f4f6; }
+  .logo-upload-box svg{ width:22px; height:22px; margin-bottom:4px; }
+  .logo-upload-box span{ font-size:10px; font-weight:600; line-height:1.3; padding:0 6px; }
+  .logo-upload-box img{ width:100%; height:100%; object-fit:contain; }
+  .logo-row{ text-align:center; }
+  .logo-row img.report-logo{
+    max-width:150px;
+    max-height:110px;
+    object-fit:contain;
+    margin:0 auto 10px auto;
+    display:block;
+  }
+  .brandrow{ text-align:center; margin-bottom:4px; }
+  .brandname{
+    font-family:"Inter",Arial,sans-serif;
+    font-weight:800;
+    letter-spacing:.03em;
+    font-size:30px;
+    color:var(--navy);
+  }
+  .brandsub{
+    font-family:"Inter",Arial,sans-serif;
+    font-style:italic;
+    font-size:13px;
+    color:var(--muted);
+    margin-bottom:18px;
+  }
+  .doctitle{
+    text-align:center;
+    font-family:"Inter",Arial,sans-serif;
+    font-weight:800;
+    font-size:19px;
+    letter-spacing:.03em;
+    margin-bottom:18px;
+  }
+  .infogrid{
+    display:grid;
+    grid-template-columns: 150px 1fr 150px 1fr;
+    row-gap:6px;
+    column-gap:8px;
+    font-family:"Inter",Arial,sans-serif;
+    font-size:12.5px;
+    margin-bottom:18px;
+  }
+  .infogrid .lab{ font-weight:700; color:#333; }
+  .infogrid .val{ color:#222; }
+
+  .resultbox{
+    background:#DDEBF3;
+    border:2px solid var(--navy);
+    border-radius:3px;
+    padding:14px 16px;
+    font-size:13.5px;
+    line-height:1.55;
+    margin-bottom:20px;
+  }
+  .resultbox b{ font-family:"Inter",Arial,sans-serif; }
+
+  h2.section{
+    font-family:"Inter",Arial,sans-serif;
+    font-size:14px;
+    font-weight:800;
+    color:var(--teal);
+    border-bottom:2px solid var(--teal);
+    padding-bottom:4px;
+    margin:22px 0 10px 0;
+    letter-spacing:.02em;
+  }
+  h3.subhead{
+    font-family:"Inter",Arial,sans-serif;
+    font-size:13px;
+    font-weight:700;
+    margin:14px 0 6px 0;
+  }
+  p.body-text{
+    font-size:13.5px;
+    line-height:1.6;
+    margin:0 0 10px 0;
+    white-space:pre-wrap;
+  }
+  table.findings{
+    width:100%;
+    border-collapse:collapse;
+    font-family:"Inter",Arial,sans-serif;
+    font-size:11.5px;
+    margin-bottom:6px;
+  }
+  table.findings th{
+    background:var(--navy);
+    color:#fff;
+    font-size:10.5px;
+    padding:7px 6px;
+    text-align:left;
+  }
+  table.findings td{
+    padding:7px 6px;
+    border-bottom:1px solid var(--line);
+    border-top:1px solid var(--line);
+    vertical-align:top;
+  }
+  ul.reco{ margin:0 0 6px 20px; padding:0; font-size:13.5px; line-height:1.6; }
+  ul.reco li{ margin-bottom:4px; }
+  .footer-disclosure{
+    font-size:12px;
+    color:var(--muted);
+    font-family:"Inter",Arial,sans-serif;
+    margin-top:26px;
+    font-style:italic;
+  }
+  .pagefoot{
+    text-align:center;
+    font-family:"Inter",Arial,sans-serif;
+    font-size:10px;
+    color:#9aa7b3;
+    margin-top:30px;
+    border-top:1px solid var(--line);
+    padding-top:8px;
+  }
+
+  @media print{
+    .panel{ display:none; }
+    .layout{ display:block; }
+    .preview-wrap{ padding:0; }
+    .sheet{ box-shadow:none; width:auto; padding:0; }
+    body{ background:#fff; }
+  }
+  @media (max-width: 900px){
+    .layout{ grid-template-columns:1fr; }
+    .panel{ max-height:none; border-right:none; border-bottom:1px solid var(--line); }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ============ FORM PANEL ============ -->
+  <div class="panel" id="formPanel">
+    <h1>Variant Report Builder</h1>
+    <p class="sub">Fill in any variant's details below — the report on the right updates live. Works for any gene/condition.</p>
+
+    <fieldset>
+      <legend>Lab / Letterhead</legend>
+      <label>Lab logo</label>
+      <div class="logo-upload-box" id="logoUploadBox" onclick="document.getElementById('logoFileInput').click();">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+        <span>Click to upload logo</span>
+      </div>
+      <input type="file" id="logoFileInput" accept="image/*" style="display:none">
+      <label>Lab name</label>
+      <input type="text" id="labName" value="Genosphere Clinical Genome Center">
+      <label>Lab subtitle</label>
+      <input type="text" id="labSub" value="Clinical Genome Center — Variant Interpretation">
+      <label>Signatory line (footer)</label>
+      <input type="text" id="signatory" value="Clinical Laboratory Director: Dr. S. Chowdhury, PhD">
+    </fieldset>
+
+    <fieldset>
+      <legend>Patient Info</legend>
+      <div class="row2">
+        <div><label>Patient name</label><input type="text" id="pName" value="Ayesha Khan"></div>
+        <div><label>Sex</label>
+          <select id="pSex"><option>Female</option><option>Male</option><option>Other/Unspecified</option></select>
+        </div>
+      </div>
+      <div class="row2">
+        <div><label>Date of birth</label><input type="date" id="pDob" value="1985-03-14"></div>
+        <div><label>Case ID</label><input type="text" id="caseId" value="GCSYN-0001"></div>
+      </div>
+      <label>Indication for testing</label>
+      <input type="text" id="indication" value="Suspected Genetic Disease">
+      <div class="row2">
+        <div><label>Ordering physician</label><input type="text" id="physician" value="Dr. Bilal Ahmed"></div>
+        <div><label>Account #</label><input type="text" id="account" value="GCGC-SYN"></div>
+      </div>
+      <div class="row2">
+        <div><label>Specimen</label><input type="text" id="specimen" value="Peripheral blood"></div>
+        <div><label>Reported date</label><input type="date" id="reportDate" value="2026-07-21"></div>
+      </div>
+      <div class="row2">
+        <div><label>Collected</label><input type="date" id="collected" value="2026-07-10"></div>
+        <div><label>Received</label><input type="date" id="received" value="2026-07-11"></div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Variant / Finding</legend>
+      <div class="row2">
+        <div class="ac-wrap">
+          <label>Gene <span style="font-weight:400;color:#9aa7b3;">(type to search)</span></label>
+          <input type="text" id="gene" value="HFE" autocomplete="off">
+          <div class="ac-list" id="geneAcList"></div>
+        </div>
+        <div><label>Transcript</label><input type="text" id="transcript" value="NM_000410.4"></div>
+      </div>
+      <div class="ac-wrap">
+        <label>Condition / disease <span style="font-weight:400;color:#9aa7b3;">(type to search)</span></label>
+        <input type="text" id="condition" value="Hereditary Hemochromatosis, Type 1 [MIM: 235200]" autocomplete="off">
+        <div class="ac-list" id="conditionAcList"></div>
+      </div>
+      <div class="row2">
+        <div><label>Chromosome:Position</label><input type="text" id="chrPos" value="6:26,091,179"></div>
+        <div><label>Zygosity</label>
+          <select id="zygosity"><option>Homozygous</option><option>Heterozygous</option><option>Compound heterozygous</option><option>Hemizygous</option></select>
+        </div>
+      </div>
+      <div class="row2">
+        <div><label>HGVS (DNA)</label><input type="text" id="hgvsDna" value="c.845G>A"></div>
+        <div><label>HGVS (Protein)</label><input type="text" id="hgvsProt" value="p.Cys282Tyr"></div>
+      </div>
+      <div class="row2">
+        <div><label>Inheritance</label>
+          <select id="inheritance">
+            <option>Autosomal Recessive</option>
+            <option>Autosomal Dominant</option>
+            <option>X-linked Recessive</option>
+            <option>X-linked Dominant</option>
+            <option>Y-linked</option>
+            <option>Mitochondrial</option>
+            <option>Multifactorial / Complex</option>
+            <option>De novo</option>
+            <option>Unknown</option>
+          </select>
+        </div>
+        <div><label>Classification</label>
+          <select id="classification"><option>Pathogenic</option><option>Likely Pathogenic</option><option>VUS</option><option>Likely Benign</option><option>Benign</option></select>
+        </div>
+      </div>
+      <label>Confirmation status</label>
+      <input type="text" id="confirmStatus" value="Confirmed">
+    </fieldset>
+
+    <fieldset>
+      <legend>Test Result Summary <span style="font-weight:400;color:#9aa7b3;text-transform:none;">(auto-generated)</span></legend>
+      <div class="auto-preview" id="panelTestResultPreview"></div>
+      <p class="auto-note">Gene, HGVS (DNA/Protein), Zygosity, Classification &amp; Condition fill in automatically from "Variant / Finding" above.</p>
+      <label>Confirmation line (editable)</label>
+      <input type="text" id="confirmLine" value="This result was confirmed by Sanger sequencing.">
+    </fieldset>
+
+    <fieldset>
+      <legend>Narrative Content</legend>
+      <label>Patient phenotype</label>
+      <textarea id="phenotype">Fatigue, arthralgia (joint pain), elevated serum ferritin and transferrin saturation on routine bloodwork; family history of iron overload.</textarea>
+      <label>Variant interpretation</label>
+      <textarea id="variantInfo">Describe the variant's known significance, functional evidence, population frequency, and in-silico predictions here.</textarea>
+      <label>Gene information</label>
+      <textarea id="geneInfo">Describe the gene's normal function and the disease spectrum associated with pathogenic variants here.</textarea>
+      <label>References (one per line)</label>
+      <textarea id="references">Feder JN, et al. Nature Genetics. 1996. (PMID: 8696333)</textarea>
+      <label>Recommendations (one per line)</label>
+      <textarea id="recommendations">Clinical correlation is recommended.
+Genetic counseling is recommended to discuss inheritance and family implications.
+Confirmatory orthogonal testing is recommended before clinical use.
+As knowledge increases, periodic re-evaluation is appropriate.</textarea>
+    </fieldset>
+
+    <div class="actions">
+      <button id="printBtn" onclick="window.print()">🖨 Print / Save as PDF</button>
+      <button id="resetBtn" onclick="location.reload()">Reset fields</button>
+      <div class="hint">Client-side only — nothing is uploaded or saved anywhere.</div>
+    </div>
+  </div>
+
+  <!-- ============ PREVIEW / REPORT ============ -->
+  <div class="preview-wrap">
+    <div class="sheet" id="sheet">
+
+      <div class="logo-row" id="outLogoRow" style="display:none;">
+        <img class="report-logo" id="outLogoImg" src="" alt="Lab logo">
+      </div>
+
+      <div class="brandrow"><span class="brandname" id="outLabName"></span></div>
+      <div class="brandsub" style="text-align:center" id="outLabSub"></div>
+      <div class="doctitle">WGS FINAL REPORT</div>
+
+      <div class="infogrid">
+        <div class="lab">Patient's Name</div><div class="val" id="outPName"></div>
+        <div class="lab">Ordering Physician</div><div class="val" id="outPhysician"></div>
+        <div class="lab">Sex</div><div class="val" id="outPSex"></div>
+        <div class="lab">Account#</div><div class="val" id="outAccount"></div>
+        <div class="lab">Date of Birth</div><div class="val" id="outPDob"></div>
+        <div class="lab">Specimen</div><div class="val" id="outSpecimen"></div>
+        <div class="lab">Indication</div><div class="val" id="outIndication"></div>
+        <div class="lab">Collected/Received</div><div class="val" id="outCollRec"></div>
+        <div class="lab">Case ID</div><div class="val" id="outCaseId"></div>
+        <div class="lab">Reported</div><div class="val" id="outReportDate"></div>
+      </div>
+
+      <div class="resultbox">
+        <b>TEST RESULT: </b><span id="outTestResult"></span>
+      </div>
+
+      <h2 class="section">PATIENT PHENOTYPE</h2>
+      <p class="body-text" id="outPhenotype"></p>
+
+      <h2 class="section">PRIMARY FINDINGS</h2>
+      <table class="findings">
+        <thead><tr>
+          <th>Confirmation</th><th>Gene &amp; Transcript</th><th>Condition</th>
+          <th>Chr:Position</th><th>Variant</th><th>Zygosity</th><th>Inheritance / Class.</th>
+        </tr></thead>
+        <tbody><tr>
+          <td id="outConfirm"></td>
+          <td id="outGeneTx"></td>
+          <td id="outCondition"></td>
+          <td id="outChrPos"></td>
+          <td id="outVariant"></td>
+          <td id="outZygosity"></td>
+          <td id="outInherClass"></td>
+        </tr></tbody>
+      </table>
+
+      <h2 class="section">INTERPRETATION</h2>
+      <h3 class="subhead">Variant Information</h3>
+      <p class="body-text" id="outVariantInfo"></p>
+      <h3 class="subhead">Gene Information</h3>
+      <p class="body-text" id="outGeneInfo"></p>
+
+      <h2 class="section">REFERENCES</h2>
+      <div id="outReferences"></div>
+
+      <h2 class="section">RECOMMENDATIONS</h2>
+      <ul class="reco" id="outRecommendations"></ul>
+
+      <div class="footer-disclosure" id="outSignatory"></div>
+      <div class="pagefoot">Template generated report — for illustrative/educational use. Confirm all clinical content before use.</div>
+
+      <div class="banner" style="margin-top:22px; margin-bottom:0;">SYNTHETIC / TEMPLATE REPORT — Verify all fields before any real clinical use.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // NOTE: "testResult" removed from this list — it is no longer a free-typed field,
+  // it is generated automatically inside generateTestResult() below.
+  const ids = [
+    "labName","labSub","signatory","pName","pSex","pDob","caseId","indication",
+    "physician","account","specimen","reportDate","collected","received",
+    "gene","transcript","condition","chrPos","zygosity","hgvsDna","hgvsProt",
+    "inheritance","classification","confirmStatus","confirmLine","phenotype",
+    "variantInfo","geneInfo","references","recommendations"
+  ];
+
+  // ---------- LOGO UPLOAD HANDLING ----------
+  let logoDataUrl = "";
+  const logoFileInput = document.getElementById("logoFileInput");
+  const logoUploadBox = document.getElementById("logoUploadBox");
+
+  logoFileInput.addEventListener("change", function(e){
+    const file = e.target.files && e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev){
+      logoDataUrl = ev.target.result;
+      logoUploadBox.innerHTML = "";
+      const previewImg = document.createElement("img");
+      previewImg.src = logoDataUrl;
+      logoUploadBox.appendChild(previewImg);
+      render();
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function esc(str){
+    const d = document.createElement("div");
+    d.innerText = str || "";
+    return d.innerHTML;
+  }
+
+  function fmtDate(iso){
+    if(!iso) return "";
+    const parts = iso.split("-");
+    if(parts.length !== 3) return iso;
+    const [y,m,d] = parts;
+    return `${d}/${m}/${y}`;
+  }
+
+  /* ================= AUTO-GENERATED TEST RESULT SENTENCE =================
+     The wording/structure below is the PERMANENT template.
+     Only these pieces are swapped in live from the "Variant / Finding" fields:
+       - v.classification  (Pathogenic / Likely Pathogenic / VUS / ...)
+       - v.zygosity        (Homozygous / Heterozygous / ...)
+       - v.gene
+       - v.hgvsDna
+       - v.hgvsProt
+       - v.condition
+  ==========================================================================*/
+  function generateTestResult(v){
+    const classification = (v.classification || "").trim();
+    const zygosity = (v.zygosity || "").trim();
+    const gene = (v.gene || "").trim();
+    const hgvsDna = (v.hgvsDna || "").trim();
+    const hgvsProt = (v.hgvsProt || "").trim();
+    const condition = (v.condition || "").trim();
+
+    const variantParen = [hgvsDna, hgvsProt].filter(Boolean).join(", ");
+    const variantPart = variantParen ? ` (${variantParen})` : "";
+    const confirmLine = (v.confirmLine || "").trim();
+    const confirmPart = confirmLine ? ` ${confirmLine}` : "";
+
+    return `A ${classification}, ${zygosity.toLowerCase()} variant in ${gene}${variantPart} was detected in this individual. ${classification} variant(s) in ${gene} are associated with ${condition}.${confirmPart}`;
+  }
+
+  function render(){
+    const v = {};
+    ids.forEach(id => { v[id] = document.getElementById(id).value; });
+
+    const outLogoRow = document.getElementById("outLogoRow");
+    const outLogoImg = document.getElementById("outLogoImg");
+    if(logoDataUrl){
+      outLogoImg.src = logoDataUrl;
+      outLogoRow.style.display = "block";
+    } else {
+      outLogoImg.src = "";
+      outLogoRow.style.display = "none";
+    }
+
+    document.getElementById("outLabName").innerText = v.labName;
+    document.getElementById("outLabSub").innerText = v.labSub;
+    document.getElementById("outPName").innerText = v.pName;
+    document.getElementById("outPhysician").innerText = v.physician;
+    document.getElementById("outPSex").innerText = v.pSex;
+    document.getElementById("outAccount").innerText = v.account;
+    document.getElementById("outPDob").innerText = fmtDate(v.pDob);
+    document.getElementById("outSpecimen").innerText = v.specimen;
+    document.getElementById("outIndication").innerText = v.indication;
+    document.getElementById("outCollRec").innerText = fmtDate(v.collected) + " / " + fmtDate(v.received);
+    document.getElementById("outCaseId").innerText = v.caseId;
+    document.getElementById("outReportDate").innerText = fmtDate(v.reportDate);
+
+    const generatedResult = generateTestResult(v);
+    document.getElementById("outTestResult").innerText = generatedResult;
+    document.getElementById("panelTestResultPreview").innerText = generatedResult;
+
+    document.getElementById("outPhenotype").innerText = v.phenotype;
+
+    document.getElementById("outConfirm").innerText = v.confirmStatus;
+    document.getElementById("outGeneTx").innerHTML = esc(v.gene) + "<br>" + esc(v.transcript);
+    document.getElementById("outCondition").innerText = v.condition;
+    document.getElementById("outChrPos").innerText = v.chrPos;
+    document.getElementById("outVariant").innerHTML = esc(v.hgvsDna) + "<br>" + esc(v.hgvsProt);
+    document.getElementById("outZygosity").innerText = v.zygosity;
+    document.getElementById("outInherClass").innerText = v.inheritance + " / " + v.classification;
+
+    document.getElementById("outVariantInfo").innerText = v.variantInfo;
+    document.getElementById("outGeneInfo").innerText = v.geneInfo;
+
+    const refBox = document.getElementById("outReferences");
+    refBox.innerHTML = "";
+    v.references.split("\n").filter(l => l.trim()).forEach(line => {
+      const p = document.createElement("p");
+      p.className = "body-text";
+      p.innerText = line.trim();
+      refBox.appendChild(p);
+    });
+
+    const recoBox = document.getElementById("outRecommendations");
+    recoBox.innerHTML = "";
+    v.recommendations.split("\n").filter(l => l.trim()).forEach(line => {
+      const li = document.createElement("li");
+      li.innerText = line.trim();
+      recoBox.appendChild(li);
+    });
+
+    document.getElementById("outSignatory").innerText = v.signatory;
+  }
+
+  ids.forEach(id => {
+    document.getElementById(id).addEventListener("input", render);
+  });
+  render();
+
+  /* ================= AUTOCOMPLETE (NIH Clinical Tables — HGNC genes & Medical Conditions) ================= */
+  function setupAutocomplete(inputId, listId, apiUrlFn, formatFn){
+    const input = document.getElementById(inputId);
+    const list = document.getElementById(listId);
+    let debounceTimer = null;
+    let currentItems = [];
+    let activeIndex = -1;
+
+    function hide(){ list.classList.remove("show"); list.innerHTML = ""; activeIndex = -1; }
+
+    function showLoading(){
+      list.innerHTML = '<div class="ac-loading">Searching…</div>';
+      list.classList.add("show");
+    }
+
+    function renderList(items){
+      currentItems = items;
+      if(!items.length){ hide(); return; }
+      list.innerHTML = "";
+      items.forEach((item, i) => {
+        const row = document.createElement("div");
+        row.className = "ac-item";
+        row.innerHTML = item.html;
+        row.addEventListener("mousedown", (e) => {
+          e.preventDefault();
+          input.value = item.value;
+          hide();
+          render();
+        });
+        list.appendChild(row);
+      });
+      list.classList.add("show");
+    }
+
+    input.addEventListener("input", () => {
+      const q = input.value.trim();
+      clearTimeout(debounceTimer);
+      if(q.length < 2){ hide(); return; }
+      showLoading();
+      debounceTimer = setTimeout(async () => {
+        try {
+          const url = apiUrlFn(q);
+          const res = await fetch(url);
+          if(!res.ok) throw new Error("Lookup failed");
+          const data = await res.json();
+          renderList(formatFn(data));
+        } catch(err){
+          list.innerHTML = '<div class="ac-loading">No connection / no results — you can still type manually.</div>';
+          list.classList.add("show");
+        }
+      }, 300);
+    });
+
+    input.addEventListener("keydown", (e) => {
+      if(!list.classList.contains("show")) return;
+      const items = list.querySelectorAll(".ac-item");
+      if(e.key === "ArrowDown"){ e.preventDefault(); activeIndex = Math.min(activeIndex+1, items.length-1); }
+      else if(e.key === "ArrowUp"){ e.preventDefault(); activeIndex = Math.max(activeIndex-1, 0); }
+      else if(e.key === "Enter"){ if(activeIndex>=0 && currentItems[activeIndex]){ e.preventDefault(); input.value = currentItems[activeIndex].value; hide(); render(); } return; }
+      else if(e.key === "Escape"){ hide(); return; }
+      else { return; }
+      items.forEach((el,i) => el.classList.toggle("active", i===activeIndex));
+    });
+
+    document.addEventListener("click", (e) => {
+      if(!input.contains(e.target) && !list.contains(e.target)) hide();
+    });
+  }
+
+  // Gene search — HGNC gene symbols via NIH Clinical Table Search Service
+  setupAutocomplete(
+    "gene", "geneAcList",
+    (q) => `https://clinicaltables.nlm.nih.gov/api/genes/v3/search?terms=${encodeURIComponent(q)}&df=symbol,name&maxList=8`,
+    (data) => {
+      const rows = data[3] || [];
+      return rows.map(r => ({
+        value: r[0],
+        html: `<b>${esc2(r[0])}</b><div class="ac-sub">${esc2(r[1]||"")}</div>`
+      }));
+    }
+  );
+
+  // Condition / disease search — NIH Medical Conditions table
+  setupAutocomplete(
+    "condition", "conditionAcList",
+    (q) => `https://clinicaltables.nlm.nih.gov/api/conditions/v3/search?terms=${encodeURIComponent(q)}&df=primary_name&maxList=8`,
+    (data) => {
+      const rows = data[3] || [];
+      return rows.map(r => ({
+        value: r[0],
+        html: `<b>${esc2(r[0])}</b>`
+      }));
+    }
+  );
+
+  function esc2(str){
+    const d = document.createElement("div");
+    d.innerText = str || "";
+    return d.innerHTML;
+  }
+</script>
+
+</body>
+</html>
